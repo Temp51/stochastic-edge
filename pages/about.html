@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | The Stochastic Edge</title>
+  <meta name="description" content="Why The Stochastic Edge exists: applying stochastic processes, Bayesian inference, and Monte Carlo simulation to real-world investing decisions.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://thestochasticedge.com/pages/about.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#E8A500">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∞</text></svg>">
+</head>
+<body>
+
+<div id="cookie-banner" class="cookie-banner hidden" role="dialog">
+  <p>We use analytics cookies. <a href="privacy-policy.html">Privacy Policy</a>.</p>
+  <div class="cookie-actions">
+    <button id="cookie-dismiss" class="btn btn--secondary btn--sm">Decline</button>
+    <button id="cookie-accept" class="btn btn--primary btn--sm">Accept</button>
+  </div>
+</div>
+
+<div id="mobile-menu" class="mobile-menu" role="dialog" aria-label="Navigation menu">
+  <button id="mobile-close" class="btn-icon" style="align-self:flex-end; margin-bottom:1rem;" aria-label="Close menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a href="../categories/index.html">Strategies</a>
+  <a href="../categories/ai-tools.html">AI Tools</a>
+  <a href="../categories/theory.html">Theory</a>
+  <a href="../categories/python.html">Python</a>
+  <a href="about.html" class="active">About</a>
+</div>
+
+<header class="site-header" id="site-header">
+  <nav class="nav" aria-label="Main navigation">
+    <a href="../index.html" class="nav-logo">
+      <span class="logo-symbol">∞</span><span class="logo-text">The Stochastic Edge</span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="../categories/index.html">Strategies</a></li>
+      <li><a href="../categories/ai-tools.html">AI Tools</a></li>
+      <li><a href="../categories/theory.html">Theory</a></li>
+      <li><a href="../categories/python.html">Python</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+      </button>
+      <a href="newsletter.html" class="btn btn--primary btn--sm">Free Toolkit →</a>
+    </div>
+    <button id="mobile-toggle" class="btn-icon" aria-label="Open menu" aria-expanded="false" style="display:none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </nav>
+</header>
+
+<main>
+  <div class="container--narrow">
+
+    <div class="about-hero" style="grid-template-columns:220px 1fr;">
+      <div class="about-avatar-large" style="width:160px; height:160px; font-size:4rem;">∞</div>
+      <div>
+        <span class="eyebrow">About</span>
+        <h1 style="margin-bottom:0.75rem;">Finance, Treated as What It Actually Is: A Probability Problem</h1>
+        <p class="lead" style="margin:0;">
+          Most investing content sells certainty. We think that's the wrong product. Markets are stochastic. Good decisions are made under uncertainty, not despite it — and the right math makes that uncertainty usable instead of terrifying.
+        </p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <article class="prose">
+      <h2>Why This Site Exists</h2>
+      <p>
+        There's a gap in personal finance content. On one side: generic advice — "diversify," "think long-term," "don't time the market" — true, but stated with no mechanism, no math, no way to check the claim yourself. On the other side: institutional quantitative research, locked behind jargon, paywalls, and degrees most readers don't have.
+      </p>
+      <p>
+        The Stochastic Edge sits in between. Every article shows its work: the formula, the Python implementation, the assumptions, and — critically — the uncertainty. When we say "P50 outcome," we mean it literally: a median of thousands of simulated paths, not a vibe.
+      </p>
+
+      <h2>How We Operate</h2>
+      <ul>
+        <li><strong>Every model is open.</strong> Python code ships with every quantitative article. Run it yourself, change the assumptions, see what breaks.</li>
+        <li><strong>Every claim is checkable.</strong> We link primary sources and cite the actual data behind a figure rather than repeating secondhand summaries.</li>
+        <li><strong>Affiliate relationships never dictate conclusions.</strong> We disclose every commercial relationship in full on our <a href="affiliate-disclosure.html">Affiliate Disclosure</a> page, and a tool review is written the same way whether or not it monetizes.</li>
+        <li><strong>Nothing here is personalized financial advice.</strong> See our full <a href="disclaimer.html">Disclaimer</a>. We teach frameworks; you apply them to your own situation, ideally alongside a licensed advisor for anything high-stakes.</li>
+      </ul>
+
+      <div class="callout callout--info">
+        <span class="callout__icon">✎</span>
+        <div>
+          <strong>Editor's note for the site owner:</strong> Replace this paragraph with your real background before publishing — your actual experience with markets, code, or data analysis, stated plainly and honestly. Specific, truthful detail (what you've built, what you've studied, what you've traded, what mistakes taught you something) builds far more trust than a vague credential, and overstating credentials on financial content carries real reputational and regulatory risk. Write the true version, even if it's shorter.
+        </div>
+      </div>
+
+      <h2>What You Won't Find Here</h2>
+      <p>
+        No price predictions. No "this stock is going to 10x." No urgency-manufactured pitches. Probability distributions don't traffic in certainty, and neither do we. If an article can't show its assumptions and its uncertainty, we don't publish it.
+      </p>
+    </article>
+
+    <div class="newsletter-strip" style="margin: 3rem 0;">
+      <h2>Get the Free Toolkit</h2>
+      <p class="lead">Python models, Monte Carlo templates, and a weekly probability-based market note.</p>
+      <a href="newsletter.html" class="btn btn--primary btn--lg">Get Instant Access →</a>
+    </div>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="../index.html" class="nav-logo" style="display:inline-flex; margin-bottom:0.75rem;">
+          <span class="logo-symbol">∞</span><span class="logo-text">The Stochastic Edge</span>
+        </a>
+        <p>Quantitative finance for the individual investor.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Research</h5>
+        <ul class="footer-links">
+          <li><a href="../articles/monte-carlo-retirement-simulation.html">Monte Carlo Retirement</a></li>
+          <li><a href="../categories/index.html">All Strategies</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Site</h5>
+        <ul class="footer-links">
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="affiliate-disclosure.html">Affiliate Disclosure</a></li>
+          <li><a href="disclaimer.html">Disclaimer</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 The Stochastic Edge. <a href="disclaimer.html">Not financial advice.</a></p>
+    </div>
+  </div>
+</footer>
+
+<button id="back-to-top" aria-label="Back to top">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script src="../src/js/main.js"></script>
+<script>
+  (function(){
+    var t = document.getElementById('mobile-toggle');
+    function check(){ if(t) t.style.display = window.innerWidth < 769 ? 'flex' : 'none'; }
+    check(); window.addEventListener('resize', check, {passive:true});
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ── PRIMARY SEO ─────────────────────────────────────────────── -->
+  <title>The Stochastic Edge — Quantitative Finance for the Individual Investor</title>
+  <meta name="description" content="Monte Carlo simulations, Bayesian portfolio theory, and AI-powered investing tools — explained for the mathematically serious individual investor. No hype. Just math.">
+  <meta name="keywords"   content="quantitative finance, monte carlo simulation, algorithmic trading, kelly criterion, bayesian investing, FIRE math, python portfolio">
+  <meta name="author"     content="The Stochastic Edge">
+  <meta name="robots"     content="index, follow">
+  <link rel="canonical"   href="https://thestochasticedge.com/">
+
+  <!-- ── OPEN GRAPH ──────────────────────────────────────────────── -->
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="The Stochastic Edge — Quantitative Finance">
+  <meta property="og:description" content="Probability-based investing strategy, Python models, and AI tools for the mathematically-minded investor.">
+  <meta property="og:url"         content="https://thestochasticedge.com/">
+  <meta property="og:image"       content="https://thestochasticedge.com/src/images/og-home.png">
+  <meta property="og:site_name"   content="The Stochastic Edge">
+
+  <!-- ── TWITTER CARD ────────────────────────────────────────────── -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@StochasticEdge">
+  <meta name="twitter:title"       content="The Stochastic Edge — Quantitative Finance">
+  <meta name="twitter:description" content="Monte Carlo, Bayesian portfolios, and AI tools. No hype. Just math.">
+  <meta name="twitter:image"       content="https://thestochasticedge.com/src/images/og-home.png">
+
+  <!-- ── JSON-LD SCHEMA ──────────────────────────────────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "The Stochastic Edge",
+    "url": "https://thestochasticedge.com",
+    "description": "Quantitative finance strategies, probability-based investing, and AI-powered wealth tools for the mathematically serious individual investor.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "The Stochastic Edge",
+      "logo": { "@type": "ImageObject", "url": "https://thestochasticedge.com/src/images/icons/logo.png" }
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://thestochasticedge.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- ── FONTS ────────────────────────────────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- ── CSS ─────────────────────────────────────────────────────── -->
+  <link rel="stylesheet" href="src/css/main.css">
+
+  <!-- ── PWA & FAVICON ───────────────────────────────────────────── -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#E8A500">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∞</text></svg>">
+</head>
+
+<body>
+
+<!-- ══ COOKIE BANNER ══════════════════════════════════════════════════ -->
+<div id="cookie-banner" class="cookie-banner hidden" role="dialog" aria-label="Cookie consent">
+  <p>We use analytics cookies to understand how readers find us — no tracking for ads. Read our <a href="pages/privacy-policy.html">Privacy Policy</a>.</p>
+  <div class="cookie-actions">
+    <button id="cookie-dismiss" class="btn btn--secondary btn--sm">Decline</button>
+    <button id="cookie-accept"  class="btn btn--primary  btn--sm">Accept</button>
+  </div>
+</div>
+
+<!-- ══ MOBILE MENU ════════════════════════════════════════════════════ -->
+<div id="mobile-menu" class="mobile-menu" role="dialog" aria-label="Navigation menu">
+  <button id="mobile-close" class="btn-icon" style="align-self:flex-end; margin-bottom:1rem;" aria-label="Close menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a href="categories/index.html">Strategies</a>
+  <a href="categories/ai-tools.html">AI Tools</a>
+  <a href="categories/theory.html">Theory</a>
+  <a href="categories/python.html">Python</a>
+  <a href="pages/about.html">About</a>
+  <a href="pages/newsletter.html" class="btn btn--primary btn--full" style="margin-top:1rem;">Get Free Toolkit →</a>
+</div>
+
+<!-- ══ SITE HEADER / NAV ══════════════════════════════════════════════ -->
+<header class="site-header" id="site-header">
+  <nav class="nav" aria-label="Main navigation">
+
+    <a href="/" class="nav-logo" aria-label="The Stochastic Edge — home">
+      <span class="logo-symbol" aria-hidden="true">∞</span>
+      <span class="logo-text">The Stochastic Edge</span>
+    </a>
+
+    <ul class="nav-links" role="list">
+      <li><a href="categories/index.html">Strategies</a></li>
+      <li><a href="categories/ai-tools.html">AI Tools</a></li>
+      <li><a href="categories/theory.html">Theory</a></li>
+      <li><a href="categories/python.html">Python</a></li>
+      <li><a href="pages/about.html">About</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+      </button>
+      <a href="pages/newsletter.html" class="btn btn--primary btn--sm">Free Toolkit →</a>
+    </div>
+
+    <button id="mobile-toggle" class="btn-icon" aria-label="Open menu" aria-expanded="false" style="display:none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ══ HERO ═══════════════════════════════════════════════════════════ -->
+<section class="hero" id="hero" aria-labelledby="hero-heading">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+
+  <div class="container">
+    <div class="hero-inner">
+
+      <div class="hero-badge animate-in">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        New: Monte Carlo Retirement Guide Published
+      </div>
+
+      <h1 id="hero-heading" class="animate-in animate-in--delay-1">
+        Invest Like a<br><span class="accent">Quantitative Researcher</span>
+      </h1>
+
+      <p class="hero-desc animate-in animate-in--delay-2">
+        Evidence-based strategies, probabilistic thinking, and AI-powered tools
+        for the mathematically serious investor. No hype. No guesswork. Just math.
+      </p>
+
+      <form class="hero-form newsletter-form animate-in animate-in--delay-3" id="hero-form" novalidate>
+        <input type="email" placeholder="your@email.com" required aria-label="Email address">
+        <button type="submit" class="btn btn--primary">Get Free Toolkit →</button>
+      </form>
+
+      <p class="hero-trust animate-in animate-in--delay-3">
+        <strong>Free Quant Investor's Toolkit</strong> · Python Scripts · Monte Carlo Models · Instant Access
+      </p>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ STATS STRIP ════════════════════════════════════════════════════ -->
+<div class="stats-strip">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-num" data-count="22" data-suffix="">0</span>
+        <span class="stat-label">Research Articles</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-count="12" data-suffix="">0</span>
+        <span class="stat-label">Math Frameworks</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-count="10000" data-suffix="+">0</span>
+        <span class="stat-label">Simulations Per Model</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-count="100" data-suffix="%">0</span>
+        <span class="stat-label">Data-Backed</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ THREE PILLARS ══════════════════════════════════════════════════ -->
+<section class="section" aria-labelledby="pillars-heading">
+  <div class="container">
+
+    <div class="section-header text-center">
+      <span class="eyebrow">Our approach</span>
+      <h2 id="pillars-heading">Finance. Quantified.</h2>
+      <p class="lead" style="max-width:560px; margin-inline:auto;">
+        We treat investing as the probabilistic optimization problem it actually is —
+        not a collection of opinions dressed up as advice.
+      </p>
+    </div>
+
+    <div class="pillars-grid">
+
+      <div class="pillar-card animate-in">
+        <div class="pillar-icon" aria-hidden="true">∫</div>
+        <h3>Mathematical Rigor</h3>
+        <p>Every strategy grounded in stochastic processes, Bayesian inference, and statistical modeling. We show the math, not just the conclusion.</p>
+      </div>
+
+      <div class="pillar-card animate-in animate-in--delay-1">
+        <div class="pillar-icon" aria-hidden="true">⟨ψ|</div>
+        <h3>AI-Augmented Analysis</h3>
+        <p>We use Claude and GPT-4 to build real financial models, live in articles. Every prompt shown. Every output verified. No black boxes.</p>
+      </div>
+
+      <div class="pillar-card animate-in animate-in--delay-2">
+        <div class="pillar-icon" aria-hidden="true">∑</div>
+        <h3>Executable Code</h3>
+        <p>Every model includes working Python. Every backtest shows its confidence intervals. Copy the code, run it, adapt it — in minutes.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURED ARTICLES ══════════════════════════════════════════════ -->
+<section class="section" style="background:var(--bg-alt); border-top:1px solid var(--border); border-bottom:1px solid var(--border);" aria-labelledby="articles-heading">
+  <div class="container">
+
+    <div class="section-header">
+      <div>
+        <span class="eyebrow">Latest research</span>
+        <h2 id="articles-heading">Quantitative Analysis</h2>
+      </div>
+      <a href="categories/index.html" class="link-arrow">All articles →</a>
+    </div>
+
+    <div class="articles-grid">
+
+      <!-- ARTICLE 01 — PUBLISHED (featured) -->
+      <a href="articles/monte-carlo-retirement-simulation.html" class="article-card article-card--featured animate-in">
+        <div class="article-card__thumb article-card__thumb--placeholder">∫</div>
+        <div class="article-card__body">
+          <div class="article-card__meta">
+            <span class="badge badge--gold">Published</span>
+            <span class="badge badge--violet">Simulation</span>
+          </div>
+          <h3 class="article-card__title">Monte Carlo Retirement Simulation: Calculate Your True FIRE Number (With Python)</h3>
+          <p class="article-card__excerpt">
+            Traditional retirement calculators give you one number and call it a plan. We run 10,000 simulations using Geometric Brownian Motion and show you the full probability distribution of your future — P10, P25, P50, P75, P90 — with working Python code.
+          </p>
+          <div class="article-card__footer">
+            <span>June 28, 2026</span>
+            <span data-reading-time=".prose">— min read</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ARTICLE 02 -->
+      <a href="pages/newsletter.html" class="article-card animate-in animate-in--delay-1">
+        <div class="article-card__thumb article-card__thumb--placeholder">κ</div>
+        <div class="article-card__body">
+          <div class="article-card__meta">
+            <span class="badge badge--muted">Coming soon</span>
+            <span class="badge badge--violet">Risk</span>
+          </div>
+          <h3 class="article-card__title">Kelly Criterion Position Sizing: The Optimal Formula for Bet and Portfolio Sizing</h3>
+          <p class="article-card__excerpt">How much of your portfolio should you put in any single trade? The Kelly Criterion gives a mathematically optimal answer — and why most investors should use a fractional version.</p>
+          <div class="article-card__footer">
+            <span>Subscribe for early access</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ARTICLE 03 -->
+      <a href="pages/newsletter.html" class="article-card animate-in animate-in--delay-2">
+        <div class="article-card__thumb article-card__thumb--placeholder">μ</div>
+        <div class="article-card__body">
+          <div class="article-card__meta">
+            <span class="badge badge--muted">Coming soon</span>
+            <span class="badge badge--gold">Tools</span>
+          </div>
+          <h3 class="article-card__title">Best AI Stock Screener 2026: I Tested 7 Tools — Here's the Probabilistic Verdict</h3>
+          <p class="article-card__excerpt">TradingView, Koyfin, Finviz, and four others — tested against a rigorous backtesting framework. Ranked by alpha-finding power, data quality, and Python integration.</p>
+          <div class="article-card__footer">
+            <span>Subscribe for early access</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ARTICLE 04 -->
+      <a href="pages/newsletter.html" class="article-card animate-in">
+        <div class="article-card__thumb article-card__thumb--placeholder">Ω</div>
+        <div class="article-card__body">
+          <div class="article-card__meta">
+            <span class="badge badge--muted">Coming soon</span>
+            <span class="badge badge--green">Simulation</span>
+          </div>
+          <h3 class="article-card__title">Safe Withdrawal Rate: What 10,000 Monte Carlo Simulations Actually Show</h3>
+          <p class="article-card__excerpt">The 4% rule is a single-point estimate from a 1994 paper. We run 10,000 paths across 100+ years of market data and show what the percentile distribution actually looks like.</p>
+          <div class="article-card__footer">
+            <span>Subscribe for early access</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ARTICLE 05 -->
+      <a href="pages/newsletter.html" class="article-card animate-in animate-in--delay-1">
+        <div class="article-card__thumb article-card__thumb--placeholder">∂</div>
+        <div class="article-card__body">
+          <div class="article-card__meta">
+            <span class="badge badge--muted">Coming soon</span>
+            <span class="badge badge--violet">Theory</span>
+          </div>
+          <h3 class="article-card__title">Black-Scholes Demystified: Option Pricing Made Intuitive for Non-Quants</h3>
+          <p class="article-card__excerpt">The most famous equation in finance, derived from first principles — without needing a PhD. We walk through the intuition, the math, and build a Python pricer from scratch.</p>
+          <div class="article-card__footer">
+            <span>Subscribe for early access</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ARTICLE 06 -->
+      <a href="pages/newsletter.html" class="article-card animate-in animate-in--delay-2">
+        <div class="article-card__thumb article-card__thumb--placeholder">σ</div>
+        <div class="article-card__body">
+          <div class="article-card__meta">
+            <span class="badge badge--muted">Coming soon</span>
+            <span class="badge badge--gold">Analysis</span>
+          </div>
+          <h3 class="article-card__title">DCA vs. Lump Sum: A Probabilistic Analysis Across 10,000 Market Scenarios</h3>
+          <p class="article-card__excerpt">The academic consensus and real-world behavioral reality are at odds. We simulate both strategies across 10,000 historical + synthetic market paths and let the data decide.</p>
+          <div class="article-card__footer">
+            <span>Subscribe for early access</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ MONTE CARLO CALCULATOR ══════════════════════════════════════════ -->
+<section class="section" aria-labelledby="calc-heading">
+  <div class="container">
+
+    <div class="calc-section" id="mc-calc">
+      <div class="calc-header">
+        <span class="eyebrow">Try it now — free</span>
+        <h2 id="calc-heading">Monte Carlo Retirement Simulator</h2>
+        <p>Adjust the sliders. Hit Run. See 1,000 possible futures for your portfolio.</p>
+      </div>
+
+      <div class="calc-grid">
+
+        <!-- INPUTS -->
+        <div class="calc-inputs">
+
+          <div class="calc-input-group">
+            <label for="mc-portfolio">
+              Current Portfolio Value
+              <span class="value-display" id="mc-portfolio-val">$200,000</span>
+            </label>
+            <input type="range" id="mc-portfolio" min="10000" max="2000000" step="10000" value="200000">
+          </div>
+
+          <div class="calc-input-group">
+            <label for="mc-monthly">
+              Monthly Contribution
+              <span class="value-display" id="mc-monthly-val">$1,500</span>
+            </label>
+            <input type="range" id="mc-monthly" min="0" max="10000" step="100" value="1500">
+          </div>
+
+          <div class="calc-input-group">
+            <label for="mc-return">
+              Expected Annual Return
+              <span class="value-display" id="mc-return-val">7%</span>
+            </label>
+            <input type="range" id="mc-return" min="2" max="15" step="0.5" value="7">
+          </div>
+
+          <div class="calc-input-group">
+            <label for="mc-years">
+              Investment Horizon
+              <span class="value-display" id="mc-years-val">25 yrs</span>
+            </label>
+            <input type="range" id="mc-years" min="5" max="50" step="1" value="25">
+          </div>
+
+          <button id="mc-run" class="btn btn--primary btn--full" style="margin-top:0.5rem;">
+            ▶ Run 1,000 Simulations
+          </button>
+
+          <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.5rem;">
+            Uses Geometric Brownian Motion with 15% annual volatility (S&amp;P 500 historical σ).
+            <a href="articles/monte-carlo-retirement-simulation.html" style="font-size:inherit;">Learn the math →</a>
+          </p>
+        </div>
+
+        <!-- RESULTS -->
+        <div class="calc-results" id="mc-results">
+          <div class="calc-results__title">Results will appear here</div>
+          <div class="percentile-rows" style="display:flex; align-items:center; justify-content:center; flex:1; color:var(--text-muted); font-size:0.9rem; text-align:center; padding:2rem 0;">
+            Adjust the sliders and click<br><strong style="color:var(--gold)">Run Simulations</strong><br>to see your probability distribution.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ NEWSLETTER STRIP ═══════════════════════════════════════════════ -->
+<section class="section" aria-labelledby="newsletter-heading">
+  <div class="container">
+    <div class="newsletter-strip animate-in">
+
+      <span class="eyebrow">Weekly · Free</span>
+      <h2 id="newsletter-heading">The Quant Investor's Edge</h2>
+      <p class="lead">
+        One probabilistic framework. One Python example. One market insight.<br>
+        Every Thursday. Read in 5 minutes. Apply immediately.
+      </p>
+
+      <form class="newsletter-form" novalidate>
+        <input type="email" placeholder="your@email.com" required aria-label="Email address">
+        <button type="submit" class="btn btn--primary">Subscribe Free →</button>
+      </form>
+
+      <p class="newsletter-fine">
+        No spam. Unsubscribe anytime.
+        <a href="pages/affiliate-disclosure.html">Affiliate disclosure</a> ·
+        <a href="pages/privacy-policy.html">Privacy</a>
+      </p>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════════════ -->
+<footer class="site-footer" aria-label="Site footer">
+  <div class="container">
+
+    <div class="footer-grid">
+
+      <!-- Brand -->
+      <div class="footer-brand">
+        <a href="/" class="nav-logo" style="margin-bottom:0.75rem; display:inline-flex;">
+          <span class="logo-symbol">∞</span>
+          <span class="logo-text">The Stochastic Edge</span>
+        </a>
+        <p>Quantitative finance strategies and probability-based investing for the mathematically serious individual investor. Every model is open-source. Every claim is cited.</p>
+        <div class="social-links">
+          <a href="https://twitter.com/StochasticEdge" rel="noopener" aria-label="Twitter">𝕏</a>
+          <a href="https://reddit.com/r/algotrading" rel="noopener" aria-label="Reddit">r/</a>
+          <a href="https://github.com/thestochasticedge" rel="noopener" aria-label="GitHub">⌥</a>
+          <a href="pages/newsletter.html" aria-label="Newsletter">✉</a>
+        </div>
+      </div>
+
+      <!-- Strategies -->
+      <div class="footer-col">
+        <h5>Strategies</h5>
+        <ul class="footer-links">
+          <li><a href="articles/monte-carlo-retirement-simulation.html">Monte Carlo Retirement</a></li>
+          <li><a href="pages/newsletter.html">Kelly Criterion Sizing</a></li>
+          <li><a href="pages/newsletter.html">Bayesian Portfolios</a></li>
+          <li><a href="pages/newsletter.html">Safe Withdrawal Rates</a></li>
+          <li><a href="pages/newsletter.html">Factor Investing</a></li>
+        </ul>
+      </div>
+
+      <!-- Tools & Theory -->
+      <div class="footer-col">
+        <h5>Theory</h5>
+        <ul class="footer-links">
+          <li><a href="pages/newsletter.html">Black-Scholes Model</a></li>
+          <li><a href="pages/newsletter.html">Markov Chains</a></li>
+          <li><a href="pages/newsletter.html">GBM Explained</a></li>
+          <li><a href="pages/newsletter.html">Ergodicity in Finance</a></li>
+          <li><a href="pages/newsletter.html">Information Ratio</a></li>
+        </ul>
+      </div>
+
+      <!-- Site -->
+      <div class="footer-col">
+        <h5>Site</h5>
+        <ul class="footer-links">
+          <li><a href="pages/newsletter.html">Free Toolkit</a></li>
+          <li><a href="pages/about.html">About</a></li>
+          <li><a href="pages/contact.html">Contact</a></li>
+          <li><a href="pages/privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="pages/affiliate-disclosure.html">Affiliate Disclosure</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 The Stochastic Edge. All rights reserved. Built on probability theory and strong coffee.</p>
+      <div class="footer-legal">
+        <a href="pages/privacy-policy.html">Privacy</a>
+        <a href="pages/affiliate-disclosure.html">Affiliates</a>
+        <a href="pages/disclaimer.html">Disclaimer</a>
+      </div>
+    </div>
+
+    <p style="font-size:0.72rem; color:var(--text-muted); text-align:center; margin-top:1.5rem; line-height:1.5;">
+      <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. If you click and open a brokerage account or purchase a product, we may earn a commission at no extra cost to you. This never influences our analysis. We only recommend tools we have used and evaluated mathematically.
+      <br><strong>Not Financial Advice:</strong> All content is for educational and informational purposes only. Nothing here constitutes personalized financial, investment, or legal advice.
+    </p>
+
+  </div>
+</footer>
+
+<!-- ══ BACK TO TOP ════════════════════════════════════════════════════ -->
+<button id="back-to-top" aria-label="Back to top">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- ══ JAVASCRIPT ════════════════════════════════════════════════════ -->
+<script src="src/js/main.js"></script>
+
+<!-- Fix: show mobile toggle only on small screens via JS -->
+<script>
+  (function(){
+    var t = document.getElementById('mobile-toggle');
+    function check(){ if(t) t.style.display = window.innerWidth < 769 ? 'flex' : 'none'; }
+    check(); window.addEventListener('resize', check, {passive:true});
+  })();
+</script>
+
+</body>
+</html>
