@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ── PRIMARY SEO — EDIT FOR EACH ARTICLE ──────────────────────── -->
+  <title>ARTICLE TITLE | The Stochastic Edge</title>
+  <meta name="description" content="ARTICLE META DESCRIPTION — 150-160 characters. Include primary keyword naturally.">
+  <meta name="author"  content="The Stochastic Edge">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://thestochasticedge.com/articles/ARTICLE-SLUG.html">
+
+  <!-- ── OPEN GRAPH ──────────────────────────────────────────────── -->
+  <meta property="og:type"        content="article">
+  <meta property="og:title"       content="ARTICLE TITLE | The Stochastic Edge">
+  <meta property="og:description" content="ARTICLE META DESCRIPTION">
+  <meta property="og:url"         content="https://thestochasticedge.com/articles/ARTICLE-SLUG.html">
+  <meta property="og:image"       content="https://thestochasticedge.com/src/images/articles/ARTICLE-SLUG-og.png">
+  <meta property="article:published_time" content="2026-01-01T00:00:00Z">
+  <meta property="article:section"        content="Quantitative Finance">
+
+  <!-- ── TWITTER CARD ────────────────────────────────────────────── -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@StochasticEdge">
+  <meta name="twitter:title"       content="ARTICLE TITLE">
+  <meta name="twitter:description" content="ARTICLE META DESCRIPTION">
+  <meta name="twitter:image"       content="https://thestochasticedge.com/src/images/articles/ARTICLE-SLUG-og.png">
+
+  <!-- ── ARTICLE JSON-LD SCHEMA ──────────────────────────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "ARTICLE TITLE",
+    "description": "ARTICLE META DESCRIPTION",
+    "image": "https://thestochasticedge.com/src/images/articles/ARTICLE-SLUG-og.png",
+    "datePublished": "2026-01-01T00:00:00Z",
+    "dateModified":  "2026-01-01T00:00:00Z",
+    "author": {
+      "@type": "Person",
+      "name": "The Stochastic Edge",
+      "url":  "https://thestochasticedge.com/pages/about.html"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "The Stochastic Edge",
+      "logo": { "@type": "ImageObject", "url": "https://thestochasticedge.com/src/images/icons/logo.png" }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id":   "https://thestochasticedge.com/articles/ARTICLE-SLUG.html"
+    }
+  }
+  </script>
+
+  <!-- ── FONTS ────────────────────────────────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- ── CSS & PWA ────────────────────────────────────────────────── -->
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#E8A500">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∞</text></svg>">
+</head>
+
+<body>
+
+<!-- ── READING PROGRESS ──────────────────────────────────────────────── -->
+<div id="reading-progress" role="progressbar" aria-label="Reading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+  <div id="reading-progress-fill"></div>
+</div>
+
+<!-- ── COOKIE BANNER ────────────────────────────────────────────────── -->
+<div id="cookie-banner" class="cookie-banner hidden" role="dialog">
+  <p>We use analytics cookies. <a href="../pages/privacy-policy.html">Privacy Policy</a>.</p>
+  <div class="cookie-actions">
+    <button id="cookie-dismiss" class="btn btn--secondary btn--sm">Decline</button>
+    <button id="cookie-accept"  class="btn btn--primary  btn--sm">Accept</button>
+  </div>
+</div>
+
+<!-- ── MOBILE MENU ───────────────────────────────────────────────────── -->
+<div id="mobile-menu" class="mobile-menu" role="dialog" aria-label="Navigation menu">
+  <button id="mobile-close" class="btn-icon" style="align-self:flex-end; margin-bottom:1rem;" aria-label="Close menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a href="../categories/index.html">Strategies</a>
+  <a href="../categories/ai-tools.html">AI Tools</a>
+  <a href="../categories/theory.html">Theory</a>
+  <a href="../categories/python.html">Python</a>
+  <a href="../pages/about.html">About</a>
+  <a href="../pages/newsletter.html" class="btn btn--primary btn--full" style="margin-top:1rem;">Get Free Toolkit →</a>
+</div>
+
+<!-- ── HEADER / NAV ──────────────────────────────────────────────────── -->
+<header class="site-header" id="site-header">
+  <nav class="nav" aria-label="Main navigation">
+    <a href="../index.html" class="nav-logo">
+      <span class="logo-symbol">∞</span>
+      <span class="logo-text">The Stochastic Edge</span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="../categories/index.html">Strategies</a></li>
+      <li><a href="../categories/ai-tools.html">AI Tools</a></li>
+      <li><a href="../categories/theory.html">Theory</a></li>
+      <li><a href="../categories/python.html">Python</a></li>
+      <li><a href="../pages/about.html">About</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+      </button>
+      <a href="../pages/newsletter.html" class="btn btn--primary btn--sm">Free Toolkit →</a>
+    </div>
+    <button id="mobile-toggle" class="btn-icon" aria-label="Open menu" aria-expanded="false" style="display:none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </nav>
+</header>
+
+<main>
+  <div class="container">
+
+    <!-- ── BREADCRUMBS ──────────────────────────────────────────────── -->
+    <nav class="breadcrumbs" aria-label="Breadcrumb" style="padding-top:2rem;">
+      <a href="../index.html">Home</a>
+      <span class="sep" aria-hidden="true">›</span>
+      <a href="../categories/index.html">CATEGORY NAME</a>
+      <span class="sep" aria-hidden="true">›</span>
+      <span class="current">ARTICLE TITLE (short)</span>
+    </nav>
+
+    <div class="article-layout">
+
+      <!-- ═══ MAIN ARTICLE COLUMN ════════════════════════════════════ -->
+      <div>
+
+        <!-- Article Header -->
+        <header class="article-header">
+          <div class="article-meta">
+            <span class="badge badge--violet">CATEGORY</span>
+            <span class="badge badge--gold">SECONDARY TAG</span>
+          </div>
+
+          <h1 class="article-title">ARTICLE TITLE — Full, SEO-Optimized, Under 65 Characters</h1>
+
+          <p class="article-subtitle">
+            A compelling one-to-two sentence summary of what the reader will learn and why it matters. Expand the title's promise.
+          </p>
+
+          <div class="article-byline">
+            <div class="avatar" aria-hidden="true">∞</div>
+            <div class="author-info">
+              <div class="author-name">The Stochastic Edge</div>
+              <div class="article-stats">
+                <time datetime="2026-01-01">January 1, 2026</time> ·
+                <span data-reading-time=".prose">— min read</span> ·
+                Updated <time datetime="2026-01-01">Jan 2026</time>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- ── ARTICLE BODY ─────────────────────────────────────────── -->
+        <article class="prose">
+
+          <!-- INTRODUCTION ─────────────────────────────────── -->
+          <p>
+            <strong>Opening hook paragraph.</strong> State the problem immediately. Why should the reader care? What conventional wisdom is wrong? Establish the mathematical framing in sentence 2.
+          </p>
+
+          <p>
+            Second paragraph: what the reader will get from this article. Be specific. "By the end of this, you'll have a working Python function that does X" is better than "We'll explore Y."
+          </p>
+
+          <div class="callout callout--gold">
+            <span class="callout__icon">📐</span>
+            <div>
+              <strong>What you'll need:</strong> Python 3.9+, numpy, matplotlib. All code in this article runs locally with no paid APIs.
+              <code>pip install numpy matplotlib pandas</code>
+            </div>
+          </div>
+
+          <!-- SECTION 1 ────────────────────────────────────── -->
+          <h2 id="section-1">Section One Title</h2>
+
+          <p>Body paragraph. Explain the concept. Link to related terms and articles where relevant. Use plain language first, then introduce the mathematical notation.</p>
+
+          <p>The mathematical framework. Show the formula clearly:</p>
+
+          <div class="math-block">
+<span class="comment">// Formula or mathematical notation here</span>
+dV = μV dt + σV dW<sub>t</sub>
+
+Where:
+  V  = portfolio value at time t
+  μ  = expected drift (annual return)
+  σ  = volatility (standard deviation of returns)
+  W  = Wiener process (standard Brownian motion)
+          </div>
+
+          <p>Explain what each variable means in plain English after showing the formula.</p>
+
+          <!-- SECTION 2 ────────────────────────────────────── -->
+          <h2 id="section-2">Python Implementation</h2>
+
+          <p>Introduction sentence before the code block. Tell the reader what the code does before showing it.</p>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python</span>
+              <button class="code-block__copy" aria-label="Copy code">Copy</button>
+            </div>
+            <pre><code class="language-python"><span class="token-comment"># Your complete, working Python code here</span>
+<span class="token-keyword">import</span> numpy <span class="token-keyword">as</span> np
+
+<span class="token-keyword">def</span> <span class="token-fn">my_function</span>(param_one, param_two):
+    <span class="token-string">"""
+    Docstring: what it does, what it returns.
+    """</span>
+    result = param_one * param_two
+    <span class="token-keyword">return</span> result
+
+<span class="token-comment"># Example usage</span>
+output = my_function(<span class="token-number">100</span>, <span class="token-number">1.07</span>)
+<span class="token-fn">print</span>(<span class="token-string">f"Result: {output:,.2f}"</span>)
+</code></pre>
+          </div>
+
+          <p>Explanation of what the code does and any important implementation details. Mention caveats or assumptions.</p>
+
+          <!-- MID-ARTICLE CTA ──────────────────────────────── -->
+          <div class="article-cta-box">
+            <h4>Get the Complete Python Notebook</h4>
+            <p>The full implementation with visualization, extended scenarios, and a Streamlit web app is in the free Quant Investor's Toolkit — sent instantly when you subscribe.</p>
+            <a href="../pages/newsletter.html" class="btn btn--primary">Get Free Toolkit →</a>
+          </div>
+
+          <!-- SECTION 3 ────────────────────────────────────── -->
+          <h2 id="section-3">Interpreting the Results</h2>
+
+          <p>Body paragraph explaining how to use the output. What does a good result look like? What's a warning sign?</p>
+
+          <div class="callout callout--info">
+            <span class="callout__icon">ℹ</span>
+            <div><strong>Key insight:</strong> A brief, important insight worth calling out visually. Keep it one to two sentences.</div>
+          </div>
+
+          <!-- SECTION 4 ────────────────────────────────────── -->
+          <h2 id="section-4">Further Resources</h2>
+
+          <p>Affiliate section — written naturally, not as an ad:</p>
+
+          <p>If you're ready to implement this strategy with a real portfolio, the broker accounts best suited for quantitative individual investors are:</p>
+
+          <ul>
+            <li><strong><a href="https://www.interactivebrokers.com" rel="nofollow sponsored">Interactive Brokers</a></strong> — Best for serious quantitative traders. Python API (ibapi), lowest margin rates, 150+ order types. <em>Disclosure: affiliate link.</em></li>
+            <li><strong><a href="https://tastytrade.com" rel="nofollow sponsored">Tastytrade</a></strong> — Best for options strategies. Clean API, strong education on probability-based options trading. <em>Disclosure: affiliate link.</em></li>
+          </ul>
+
+          <!-- CONCLUSION ───────────────────────────────────── -->
+          <h2 id="conclusion">Conclusion</h2>
+
+          <p>Summarize the three most important takeaways in plain English. Don't introduce new information. Reinforce the mathematical insight that was the article's core contribution.</p>
+
+          <p>What's the reader's next action? Point them to a related article or the newsletter toolkit.</p>
+
+        </article>
+
+        <!-- ── SHARE BAR ─────────────────────────────────────────────── -->
+        <div class="share-bar" aria-label="Share this article">
+          <span style="font-size:0.82rem; color:var(--text-muted); align-self:center;">Share:</span>
+          <button class="share-btn share-btn--twitter"  data-share="twitter">𝕏 Twitter</button>
+          <button class="share-btn share-btn--reddit"   data-share="reddit">Reddit</button>
+          <button class="share-btn share-btn--linkedin" data-share="linkedin">LinkedIn</button>
+          <button class="share-btn"                     data-share="copy">🔗 Copy link</button>
+        </div>
+
+        <!-- ── AUTHOR BOX ────────────────────────────────────────────── -->
+        <div class="author-box">
+          <div class="author-box__avatar" aria-hidden="true">∞</div>
+          <div class="author-box__content">
+            <h4>The Stochastic Edge</h4>
+            <div class="author-box__role">Quantitative Finance Writer &amp; Independent Researcher</div>
+            <p class="author-box__bio">
+              We apply the mathematical tools of institutional quantitative finance — Monte Carlo simulation, Bayesian inference, stochastic processes — to the real-world investing decisions of individual investors. All code is open-source. All analysis is independently conducted.
+            </p>
+          </div>
+        </div>
+
+        <!-- ── RELATED ARTICLES ──────────────────────────────────────── -->
+        <section aria-labelledby="related-heading" style="margin-top:3rem;">
+          <h3 id="related-heading" style="margin-bottom:1rem;">Related Research</h3>
+          <div class="related-grid">
+
+            <a href="monte-carlo-retirement-simulation.html" class="article-card">
+              <div class="article-card__thumb article-card__thumb--placeholder">∫</div>
+              <div class="article-card__body">
+                <div class="article-card__meta"><span class="badge badge--violet">Simulation</span></div>
+                <h3 class="article-card__title">Monte Carlo Retirement Simulation</h3>
+                <div class="article-card__footer"><span>June 2026</span></div>
+              </div>
+            </a>
+
+            <a href="../pages/newsletter.html" class="article-card">
+              <div class="article-card__thumb article-card__thumb--placeholder">κ</div>
+              <div class="article-card__body">
+                <div class="article-card__meta"><span class="badge badge--gold">Risk</span></div>
+                <h3 class="article-card__title">Kelly Criterion Position Sizing</h3>
+                <div class="article-card__footer"><span>Coming soon — subscribe</span></div>
+              </div>
+            </a>
+
+            <a href="../pages/newsletter.html" class="article-card">
+              <div class="article-card__thumb article-card__thumb--placeholder">σ</div>
+              <div class="article-card__body">
+                <div class="article-card__meta"><span class="badge badge--green">Analysis</span></div>
+                <h3 class="article-card__title">DCA vs. Lump Sum: 10,000 Scenarios</h3>
+                <div class="article-card__footer"><span>Coming soon — subscribe</span></div>
+              </div>
+            </a>
+
+          </div>
+        </section>
+
+      </div><!-- end main column -->
+
+      <!-- ═══ TOC SIDEBAR ════════════════════════════════════════════ -->
+      <aside class="toc-sidebar" aria-label="Table of contents">
+        <div class="toc">
+          <div class="toc-title">In this article</div>
+          <ul class="toc-list" id="toc-list" role="list">
+            <!-- Auto-generated by main.js from article h2/h3 headings -->
+          </ul>
+        </div>
+
+        <!-- Sidebar affiliate box -->
+        <div class="card" style="margin-top:1rem; border-top:2px solid var(--gold);">
+          <div class="card-label">Recommended broker</div>
+          <div class="card-title" style="font-size:0.95rem;">Interactive Brokers</div>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0.5rem 0 0.75rem;">
+            Python API, lowest margin rates, 150+ order types. Used by quantitative individual investors worldwide.
+          </p>
+          <a href="https://www.interactivebrokers.com" rel="nofollow sponsored" class="btn btn--secondary btn--sm btn--full">Open Account →</a>
+          <p style="font-size:0.7rem; color:var(--text-muted); margin-top:0.5rem;">Affiliate link · We earn a commission</p>
+        </div>
+      </aside>
+
+    </div><!-- end article-layout grid -->
+  </div><!-- end container -->
+</main>
+
+<!-- ── FOOTER ──────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="../index.html" class="nav-logo" style="display:inline-flex; margin-bottom:0.75rem;">
+          <span class="logo-symbol">∞</span>
+          <span class="logo-text">The Stochastic Edge</span>
+        </a>
+        <p>Quantitative finance strategies and probability-based investing for the individual investor.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Strategies</h5>
+        <ul class="footer-links">
+          <li><a href="monte-carlo-retirement-simulation.html">Monte Carlo Retirement</a></li>
+          <li><a href="../pages/newsletter.html">Kelly Criterion</a></li>
+          <li><a href="../pages/newsletter.html">Bayesian Portfolios</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Site</h5>
+        <ul class="footer-links">
+          <li><a href="../pages/newsletter.html">Free Toolkit</a></li>
+          <li><a href="../pages/about.html">About</a></li>
+          <li><a href="../pages/privacy-policy.html">Privacy</a></li>
+          <li><a href="../pages/affiliate-disclosure.html">Affiliates</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 The Stochastic Edge. Not financial advice. <a href="../pages/disclaimer.html">Full disclaimer</a>.</p>
+    </div>
+  </div>
+</footer>
+
+<button id="back-to-top" aria-label="Back to top">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script src="../src/js/main.js"></script>
+<script>
+  (function(){
+    var t = document.getElementById('mobile-toggle');
+    function check(){ if(t) t.style.display = window.innerWidth < 769 ? 'flex' : 'none'; }
+    check(); window.addEventListener('resize', check, {passive:true});
+  })();
+</script>
+
+</body>
+</html>

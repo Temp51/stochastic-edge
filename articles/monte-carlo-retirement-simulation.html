@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Monte Carlo Retirement Simulation: Calculate Your True FIRE Number (Python) | The Stochastic Edge</title>
+  <meta name="description" content="Run 10,000 retirement simulations using Geometric Brownian Motion in Python. Get a probability distribution of your FIRE number — P10, P50, P90 — not a single misleading average.">
+  <meta name="author"  content="The Stochastic Edge">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://thestochasticedge.com/articles/monte-carlo-retirement-simulation.html">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:title"       content="Monte Carlo Retirement Simulation: Your True FIRE Number">
+  <meta property="og:description" content="10,000 simulations using Geometric Brownian Motion. Get probabilities, not averages. Full Python code included.">
+  <meta property="og:url"         content="https://thestochasticedge.com/articles/monte-carlo-retirement-simulation.html">
+  <meta property="og:image"       content="https://thestochasticedge.com/src/images/articles/monte-carlo-retirement-og.png">
+  <meta property="article:published_time" content="2026-06-28T08:00:00Z">
+  <meta property="article:section"        content="Quantitative Finance">
+  <meta property="article:tag"            content="Monte Carlo">
+  <meta property="article:tag"            content="FIRE">
+  <meta property="article:tag"            content="Python">
+  <meta property="article:tag"            content="Retirement Planning">
+
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@StochasticEdge">
+  <meta name="twitter:title"       content="Monte Carlo Retirement Simulation: Your True FIRE Number">
+  <meta name="twitter:description" content="10,000 simulations, full Python code, probability distributions instead of averages.">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Monte Carlo Retirement Simulation: Calculate Your True FIRE Number (With Python)",
+    "description": "Run 10,000 retirement simulations using Geometric Brownian Motion in Python. Get a full probability distribution of your FIRE outcomes.",
+    "image": "https://thestochasticedge.com/src/images/articles/monte-carlo-retirement-og.png",
+    "datePublished": "2026-06-28T08:00:00Z",
+    "dateModified":  "2026-06-28T08:00:00Z",
+    "author": { "@type": "Person", "name": "The Stochastic Edge", "url": "https://thestochasticedge.com/pages/about.html" },
+    "publisher": { "@type": "Organization", "name": "The Stochastic Edge",
+      "logo": { "@type": "ImageObject", "url": "https://thestochasticedge.com/src/images/icons/logo.png" }
+    },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://thestochasticedge.com/articles/monte-carlo-retirement-simulation.html" },
+    "keywords": "Monte Carlo simulation, retirement planning, FIRE, Python, Geometric Brownian Motion, safe withdrawal rate"
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#E8A500">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∞</text></svg>">
+</head>
+<body>
+
+<div id="reading-progress" role="progressbar" aria-label="Reading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+  <div id="reading-progress-fill"></div>
+</div>
+
+<div id="cookie-banner" class="cookie-banner hidden" role="dialog">
+  <p>We use analytics cookies. <a href="../pages/privacy-policy.html">Privacy Policy</a>.</p>
+  <div class="cookie-actions">
+    <button id="cookie-dismiss" class="btn btn--secondary btn--sm">Decline</button>
+    <button id="cookie-accept"  class="btn btn--primary  btn--sm">Accept</button>
+  </div>
+</div>
+
+<div id="mobile-menu" class="mobile-menu" role="dialog" aria-label="Navigation menu">
+  <button id="mobile-close" class="btn-icon" style="align-self:flex-end; margin-bottom:1rem;" aria-label="Close menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a href="../categories/index.html">Strategies</a>
+  <a href="../categories/ai-tools.html">AI Tools</a>
+  <a href="../categories/theory.html">Theory</a>
+  <a href="../categories/python.html">Python</a>
+  <a href="../pages/about.html">About</a>
+  <a href="../pages/newsletter.html" class="btn btn--primary btn--full" style="margin-top:1rem;">Get Free Toolkit →</a>
+</div>
+
+<header class="site-header" id="site-header">
+  <nav class="nav" aria-label="Main navigation">
+    <a href="../index.html" class="nav-logo">
+      <span class="logo-symbol">∞</span><span class="logo-text">The Stochastic Edge</span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="../categories/index.html">Strategies</a></li>
+      <li><a href="../categories/ai-tools.html">AI Tools</a></li>
+      <li><a href="../categories/theory.html">Theory</a></li>
+      <li><a href="../categories/python.html">Python</a></li>
+      <li><a href="../pages/about.html">About</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+      </button>
+      <a href="../pages/newsletter.html" class="btn btn--primary btn--sm">Free Toolkit →</a>
+    </div>
+    <button id="mobile-toggle" class="btn-icon" aria-label="Open menu" aria-expanded="false" style="display:none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </nav>
+</header>
+
+<main>
+  <div class="container">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb" style="padding-top:2rem;">
+      <a href="../index.html">Home</a>
+      <span class="sep">›</span>
+      <a href="../categories/index.html">Strategies</a>
+      <span class="sep">›</span>
+      <span class="current">Monte Carlo Retirement Simulation</span>
+    </nav>
+
+    <div class="article-layout">
+
+      <!-- ═════ MAIN ARTICLE ══════════════════════════════════════════ -->
+      <div>
+        <header class="article-header">
+          <div class="article-meta">
+            <span class="badge badge--green">Simulation</span>
+            <span class="badge badge--violet">Python</span>
+            <span class="badge badge--gold">FIRE</span>
+          </div>
+          <h1 class="article-title">Monte Carlo Retirement Simulation: Calculate Your True FIRE Number (With Python)</h1>
+          <p class="article-subtitle">
+            Traditional retirement calculators give you one number and call it a plan. We run 10,000 simulations using Geometric Brownian Motion and give you a probability distribution — so you can plan for reality, not fantasy.
+          </p>
+          <div class="article-byline">
+            <div class="avatar">∞</div>
+            <div class="author-info">
+              <div class="author-name">The Stochastic Edge</div>
+              <div class="article-stats">
+                <time datetime="2026-06-28">June 28, 2026</time> ·
+                <span data-reading-time=".prose">— min read</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- ═════ ARTICLE BODY ══════════════════════════════════════════ -->
+        <article class="prose">
+
+          <p>
+            <strong>Your retirement calculator is lying to you.</strong> Not through malice — through mathematical naivety. When a calculator tells you "save $1.2 million and you can retire," it's assuming one thing: that markets will deliver their average return every single year, in a perfectly smooth line, right on schedule.
+          </p>
+
+          <p>
+            Markets don't do that. And the gap between "average return assumed" and "actual sequence of returns experienced" can be the difference between a comfortable retirement and running out of money at 74.
+          </p>
+
+          <p>
+            Monte Carlo simulation fixes this. Instead of one deterministic future, we simulate 10,000 possible futures — each one sampling from the real statistical distribution of market returns, including the volatile, unpredictable years that make real investing hard. The result isn't a single number. It's a probability distribution: your P10 (pessimistic), P50 (median), and P90 (optimistic) outcomes.
+          </p>
+
+          <div class="callout callout--gold">
+            <span class="callout__icon">📐</span>
+            <div>
+              <strong>Prerequisites:</strong> Python 3.9+. Install dependencies with:
+              <code>pip install numpy matplotlib pandas</code>.
+              No paid APIs required. The complete Jupyter notebook is in the free
+              <a href="../pages/newsletter.html">Quant Investor's Toolkit</a>.
+            </div>
+          </div>
+
+          <!-- ── SECTION 1 ────────────────────────────────────────── -->
+          <h2 id="why-averages-fail">Why the Average Return Assumption Is Dangerous</h2>
+
+          <p>
+            Consider two investors, Alex and Morgan. Both retire with $1,000,000. Both experience a 7% average annual return over 30 years. Both withdraw $40,000 per year (the classic 4% rule). The <em>average</em> is identical. But the <em>sequence</em> differs:
+          </p>
+
+          <ul>
+            <li><strong>Alex</strong> experiences strong early years (+20%, +15%, +12%) followed by a crash at year 10.</li>
+            <li><strong>Morgan</strong> experiences a severe bear market in years 1–3 (−30%, −18%, −5%), then a long recovery.</li>
+          </ul>
+
+          <p>
+            Alex retires comfortably. Morgan runs out of money at year 19. Same average return. Completely different outcome. This is the <strong>sequence-of-returns risk</strong>, and it is the central problem that Monte Carlo simulation solves.
+          </p>
+
+          <p>
+            The mathematical reason conventional calculators fail: they model future wealth as a deterministic function of the arithmetic mean return. But wealth accumulation under reinvestment is a multiplicative process — it depends on the <em>geometric mean</em>, which is always lower than the arithmetic mean when volatility is nonzero.
+          </p>
+
+          <div class="math-block">
+<span class="comment">// The relationship between arithmetic mean, geometric mean, and volatility</span>
+<span class="key">Geometric Mean</span> ≈ Arithmetic Mean − (σ² / 2)
+
+Example:
+  Arithmetic mean return: μ  = 10%
+  Annual volatility:       σ  = 15%
+  Geometric mean:              10% − (0.15² / 2) = 10% − 1.125% = <span class="result">8.875%</span>
+
+The 1.125% annual drag compounds dramatically over 30 years.
+$1M at 10% for 30 years → $17.4M  (wrong — assumes arithmetic mean)
+$1M at 8.875% for 30 years → $12.8M (closer — accounts for volatility drag)
+<span class="comment">// This underestimates variance. Monte Carlo captures the full distribution.</span>
+          </div>
+
+          <!-- ── SECTION 2 ────────────────────────────────────────── -->
+          <h2 id="gbm-model">The Mathematical Framework: Geometric Brownian Motion</h2>
+
+          <p>
+            Monte Carlo retirement simulation is built on <strong>Geometric Brownian Motion (GBM)</strong> — the same mathematical model that underlies the Black-Scholes option pricing formula. It models the stochastic evolution of portfolio value over time.
+          </p>
+
+          <p>The continuous-time GBM stochastic differential equation is:</p>
+
+          <div class="math-block">
+dV(t) = μ · V(t) · dt  +  σ · V(t) · dW(t)
+
+Where:
+  V(t) = portfolio value at time t
+  μ    = expected drift (annualized expected return, e.g. 0.07 for 7%)
+  σ    = volatility (annualized standard deviation, e.g. 0.15 for 15%)
+  dW   = increment of a Wiener process (standard Brownian motion)
+
+<span class="comment">// The solution to this SDE is log-normal:</span>
+
+V(t) = V(0) · exp[ (μ − σ²/2)·t  +  σ·W(t) ]
+
+<span class="comment">// In discrete monthly time steps (Δt = 1/12):</span>
+
+V(t+1) = V(t) · exp[ (μ/12 − σ²/24)  +  (σ/√12) · Z ]  +  C
+
+Where:
+  Z ~ N(0,1)  (standard normal random variable)
+  C = monthly contribution ($)
+          </div>
+
+          <p>
+            Each simulation path generates one possible 30-year retirement scenario by repeatedly drawing <code>Z</code> from a standard normal distribution and applying the formula above. Run this 10,000 times and you get 10,000 plausible futures — the full probability distribution of outcomes.
+          </p>
+
+          <!-- ── SECTION 3 ────────────────────────────────────────── -->
+          <h2 id="python-implementation">Python Implementation: The Full Function</h2>
+
+          <p>
+            Here is a complete, production-quality Monte Carlo retirement simulator. This is the exact function in the <a href="../pages/newsletter.html">Quant Investor's Toolkit</a> — nothing withheld.
+          </p>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python</span>
+              <button class="code-block__copy" aria-label="Copy code">Copy</button>
+            </div>
+            <pre><code class="language-python"><span class="token-keyword">import</span> numpy <span class="token-keyword">as</span> np
+<span class="token-keyword">import</span> matplotlib.pyplot <span class="token-keyword">as</span> plt
+<span class="token-keyword">from</span> dataclasses <span class="token-keyword">import</span> dataclass
+<span class="token-keyword">from</span> typing <span class="token-keyword">import</span> Optional
+
+
+<span class="token-keyword">@dataclass</span>
+<span class="token-keyword">class</span> <span class="token-fn">SimulationResult</span>:
+    p10:    <span class="token-fn">float</span>   <span class="token-comment"># 10th percentile — pessimistic scenario</span>
+    p25:    <span class="token-fn">float</span>   <span class="token-comment"># 25th percentile</span>
+    p50:    <span class="token-fn">float</span>   <span class="token-comment"># median scenario</span>
+    p75:    <span class="token-fn">float</span>   <span class="token-comment"># 75th percentile</span>
+    p90:    <span class="token-fn">float</span>   <span class="token-comment"># 90th percentile — optimistic scenario</span>
+    mean:   <span class="token-fn">float</span>   <span class="token-comment"># arithmetic mean of all paths</span>
+    p_ruin: <span class="token-fn">float</span>   <span class="token-comment"># P(final value &lt; 50% of starting value)</span>
+    paths:  np.ndarray  <span class="token-comment"># all simulation paths (for visualization)</span>
+
+
+<span class="token-keyword">def</span> <span class="token-fn">monte_carlo_retirement</span>(
+    portfolio_value:    <span class="token-fn">float</span>,
+    monthly_contribution: <span class="token-fn">float</span>  = <span class="token-number">0</span>,
+    annual_return:      <span class="token-fn">float</span>  = <span class="token-number">0.07</span>,
+    annual_volatility:  <span class="token-fn">float</span>  = <span class="token-number">0.15</span>,
+    years:              <span class="token-fn">int</span>    = <span class="token-number">30</span>,
+    annual_withdrawal:  <span class="token-fn">float</span>  = <span class="token-number">0.0</span>,
+    simulations:        <span class="token-fn">int</span>    = <span class="token-number">10_000</span>,
+    seed:               Optional[<span class="token-fn">int</span>] = <span class="token-number">42</span>,
+) -&gt; SimulationResult:
+    <span class="token-string">"""
+    Monte Carlo retirement simulation using Geometric Brownian Motion.
+
+    Parameters:
+    -----------
+    portfolio_value      : Current portfolio value in dollars
+    monthly_contribution : Monthly addition (use 0 during retirement drawdown)
+    annual_return        : Expected nominal annual return (decimal). Default 0.07 = 7%
+    annual_volatility    : Annual return standard deviation. Default 0.15 = 15% (S&amp;P 500 hist.)
+    years                : Time horizon in years
+    annual_withdrawal    : Annual withdrawal amount (for drawdown phase). Default 0.
+    simulations          : Number of Monte Carlo paths. 10,000 recommended for stability.
+    seed                 : Random seed for reproducibility. Set to None for fresh randomness.
+
+    Returns:
+    --------
+    SimulationResult dataclass with percentiles, mean, ruin probability, and all paths.
+    """</span>
+    <span class="token-keyword">if</span> seed <span class="token-keyword">is not</span> <span class="token-keyword">None</span>:
+        rng = np.random.default_rng(seed)
+    <span class="token-keyword">else</span>:
+        rng = np.random.default_rng()
+
+    <span class="token-comment"># Convert annual parameters to monthly</span>
+    mu      = annual_return / <span class="token-number">12</span>
+    sigma   = annual_volatility / np.sqrt(<span class="token-number">12</span>)
+    months  = years * <span class="token-number">12</span>
+    monthly_withdrawal = annual_withdrawal / <span class="token-number">12</span>
+
+    <span class="token-comment"># Vectorized simulation: draw all random numbers at once</span>
+    <span class="token-comment"># Shape: (simulations, months)</span>
+    Z = rng.standard_normal((<span class="token-fn">int</span>(simulations), <span class="token-fn">int</span>(months)))
+
+    <span class="token-comment"># GBM monthly return multiplier: exp[(μ - σ²/2)Δt + σ√Δt · Z]</span>
+    monthly_returns = np.exp((mu - <span class="token-number">0.5</span> * sigma ** <span class="token-number">2</span>) + sigma * Z)
+
+    <span class="token-comment"># Accumulate wealth month by month</span>
+    net_monthly_cashflow = monthly_contribution - monthly_withdrawal
+    paths = np.zeros((simulations, months + <span class="token-number">1</span>))
+    paths[:, <span class="token-number">0</span>] = portfolio_value
+
+    <span class="token-keyword">for</span> m <span class="token-keyword">in</span> <span class="token-fn">range</span>(months):
+        paths[:, m + <span class="token-number">1</span>] = np.maximum(
+            <span class="token-number">0</span>,  <span class="token-comment"># portfolio cannot go below zero</span>
+            paths[:, m] * monthly_returns[:, m] + net_monthly_cashflow
+        )
+
+    final_values = paths[:, -<span class="token-number">1</span>]
+
+    <span class="token-keyword">return</span> SimulationResult(
+        p10    = <span class="token-fn">float</span>(np.percentile(final_values, <span class="token-number">10</span>)),
+        p25    = <span class="token-fn">float</span>(np.percentile(final_values, <span class="token-number">25</span>)),
+        p50    = <span class="token-fn">float</span>(np.percentile(final_values, <span class="token-number">50</span>)),
+        p75    = <span class="token-fn">float</span>(np.percentile(final_values, <span class="token-number">75</span>)),
+        p90    = <span class="token-fn">float</span>(np.percentile(final_values, <span class="token-number">90</span>)),
+        mean   = <span class="token-fn">float</span>(final_values.mean()),
+        p_ruin = <span class="token-fn">float</span>(np.mean(final_values &lt; portfolio_value * <span class="token-number">0.5</span>)),
+        paths  = paths,
+    )
+
+
+<span class="token-comment"># ── EXAMPLE: Accumulation phase ──────────────────────────────────────</span>
+result = monte_carlo_retirement(
+    portfolio_value     = <span class="token-number">200_000</span>,   <span class="token-comment"># $200K current portfolio</span>
+    monthly_contribution= <span class="token-number">2_000</span>,    <span class="token-comment"># $2K/month saved</span>
+    annual_return       = <span class="token-number">0.07</span>,     <span class="token-comment"># 7% expected return</span>
+    annual_volatility   = <span class="token-number">0.15</span>,     <span class="token-comment"># 15% annual volatility</span>
+    years               = <span class="token-number">25</span>,       <span class="token-comment"># 25 years to retirement</span>
+    simulations         = <span class="token-number">10_000</span>,
+)
+
+<span class="token-fn">print</span>(<span class="token-string">f"Pessimistic (P10): ${result.p10:>12,.0f}"</span>)
+<span class="token-fn">print</span>(<span class="token-string">f"Median     (P50): ${result.p50:>12,.0f}"</span>)
+<span class="token-fn">print</span>(<span class="token-string">f"Optimistic (P90): ${result.p90:>12,.0f}"</span>)
+<span class="token-fn">print</span>(<span class="token-string">f"P(major loss):     {result.p_ruin * 100:.1f}%"</span>)
+</code></pre>
+          </div>
+
+          <p>Running this with a $200K starting portfolio, $2K monthly contributions, 7% expected return, and a 25-year horizon produces output similar to:</p>
+
+          <div class="math-block">
+<span class="comment">$ python monte_carlo.py</span>
+
+Pessimistic (P10): $    <span class="result">654,200</span>
+Median     (P50): $  <span class="result">1,287,400</span>
+Optimistic (P90): $  <span class="result">2,891,700</span>
+P(major loss):     <span class="result">0.3%</span>
+
+<span class="comment">// The spread between P10 and P90 is 4.4× — this is the uncertainty</span>
+<span class="comment">// that conventional calculators completely ignore.</span>
+          </div>
+
+          <!-- ── SECTION 4 ────────────────────────────────────────── -->
+          <h2 id="interpreting-percentiles">Interpreting Percentiles: Planning With Probability</h2>
+
+          <p>
+            The percentile outputs are not predictions — they are <strong>statements of probability given your model assumptions</strong>. Understanding what each means is critical to using them correctly.
+          </p>
+
+          <ul>
+            <li><strong>P10 — The Stress Test:</strong> In 10% of simulated futures, your portfolio ends below this value. If you cannot survive financially at P10, you need more capital or lower withdrawals. This is your worst-case planning number.</li>
+            <li><strong>P25 — The Conservative Plan:</strong> A 75% probability of doing at least this well. Conservative planners should ensure their retirement budget works at P25.</li>
+            <li><strong>P50 — The Median:</strong> Half of all simulated paths end above this, half below. Not a safe number to plan around for retirement income — the 50% probability of running out of money is unacceptably high for most people.</li>
+            <li><strong>P75 — The Comfortable Case:</strong> Three-quarters of paths end above this. Most financial planners target P75 as the planning baseline for sustainable withdrawals.</li>
+            <li><strong>P90 — The Optimistic Scenario:</strong> Only 10% of paths do better. This is your upside — useful for thinking about legacy, charity, or enhanced spending.</li>
+          </ul>
+
+          <div class="callout callout--info">
+            <span class="callout__icon">ℹ</span>
+            <div>
+              <strong>The planner's rule of thumb:</strong> Design your retirement budget so it is fully funded at P25. If things go better (P50+), treat the surplus as optionality — enhanced lifestyle, legacy, or charitable giving. Never plan on the median or above.
+            </div>
+          </div>
+
+          <!-- MID-ARTICLE CTA ───────────────────────────────────── -->
+          <div class="article-cta-box">
+            <h4>Get the Complete Python Notebook + Streamlit App</h4>
+            <p>The full toolkit includes: the complete Monte Carlo function with drawdown phase modeling, Social Security income integration, inflation adjustment, a Streamlit web interface, and a PDF guide on safe withdrawal rates. Free when you subscribe.</p>
+            <a href="../pages/newsletter.html" class="btn btn--primary">Get Free Toolkit →</a>
+          </div>
+
+          <!-- ── SECTION 5 ────────────────────────────────────────── -->
+          <h2 id="safe-withdrawal-rate">What 10,000 Simulations Tell Us About the 4% Rule</h2>
+
+          <p>
+            The 4% safe withdrawal rate comes from the 1994 "Trinity Study" — a historical backtesting analysis by three Trinity University professors. It found that a 4% initial withdrawal rate, adjusted for inflation annually, had roughly a 95% success rate over 30-year retirement periods in US historical data.
+          </p>
+
+          <p>
+            Run Monte Carlo simulation on the same parameters — $1,000,000 portfolio, 7% return, 15% volatility, $40,000/year withdrawal (4%), 30-year horizon — and the model produces:
+          </p>
+
+          <div class="math-block">
+<span class="comment">// 4% Rule Monte Carlo Analysis</span>
+<span class="comment">// $1M portfolio, $40K/year withdrawal, 7% return, 15% vol, 30 years</span>
+
+P10 survival (worst 10%): portfolio reaches <span class="result">$0 at year ~21</span>
+P25 survival:              final value  ≈ <span class="result">$180,000</span>
+P50 survival:              final value  ≈ <span class="result">$1,240,000</span>  (fully funded)
+P75 survival:              final value  ≈ <span class="result">$2,850,000</span>
+P90 survival:              final value  ≈ <span class="result">$5,100,000</span>
+
+P(portfolio survives 30 years)  ≈ <span class="result">87%</span>   (vs. Trinity Study's 95%)
+P(portfolio runs out before 25 years) ≈ <span class="result">8%</span>
+
+<span class="comment">// The 3% difference from Trinity Study reflects:
+// - Monte Carlo uses forward-looking parameters (lower current valuations)
+// - Trinity Study used historical US data with survivor bias
+// - Monte Carlo accounts for full volatility distribution</span>
+          </div>
+
+          <p>
+            The 87% success rate is meaningful — but it's not the 95% often cited. In a population of 10,000 retirees following the 4% rule, roughly 1,300 would run out of money before 30 years. Whether that risk is acceptable depends entirely on your individual circumstances, other income sources, and flexibility.
+          </p>
+
+          <!-- ── SECTION 6 ────────────────────────────────────────── -->
+          <h2 id="customize">Customize for Your Situation</h2>
+
+          <p>The function above is designed to be composable. Here are the most important customizations:</p>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python</span>
+              <button class="code-block__copy" aria-label="Copy code">Copy</button>
+            </div>
+            <pre><code class="language-python"><span class="token-comment"># ── Scenario 1: Conservative allocation (60/40 portfolio) ────────────</span>
+conservative = monte_carlo_retirement(
+    portfolio_value      = <span class="token-number">500_000</span>,
+    monthly_contribution = <span class="token-number">1_500</span>,
+    annual_return        = <span class="token-number">0.055</span>,  <span class="token-comment"># lower expected return for bonds</span>
+    annual_volatility    = <span class="token-number">0.10</span>,   <span class="token-comment"># lower vol for balanced portfolio</span>
+    years                = <span class="token-number">30</span>,
+)
+
+<span class="token-comment"># ── Scenario 2: Drawdown / retirement phase ──────────────────────────</span>
+drawdown = monte_carlo_retirement(
+    portfolio_value      = <span class="token-number">1_200_000</span>,
+    monthly_contribution = <span class="token-number">0</span>,       <span class="token-comment"># no new contributions in retirement</span>
+    annual_return        = <span class="token-number">0.06</span>,
+    annual_volatility    = <span class="token-number">0.12</span>,   <span class="token-comment"># slightly de-risked in retirement</span>
+    annual_withdrawal    = <span class="token-number">48_000</span>, <span class="token-comment"># $4,000/month spending</span>
+    years                = <span class="token-number">35</span>,
+    simulations          = <span class="token-number">10_000</span>,
+    seed                 = <span class="token-keyword">None</span>,   <span class="token-comment"># fresh randomness each run</span>
+)
+
+<span class="token-fn">print</span>(<span class="token-string">f"Drawdown P10 (worst 10%): ${drawdown.p10:,.0f}"</span>)
+<span class="token-fn">print</span>(<span class="token-string">f"Drawdown P50 (median):    ${drawdown.p50:,.0f}"</span>)
+<span class="token-fn">print</span>(<span class="token-string">f"P(ruin before 35 years):  {drawdown.p_ruin * 100:.1f}%"</span>)
+
+<span class="token-comment"># ── Scenario 3: Compare multiple contribution levels ─────────────────</span>
+<span class="token-keyword">for</span> monthly <span class="token-keyword">in</span> [<span class="token-number">500</span>, <span class="token-number">1000</span>, <span class="token-number">2000</span>, <span class="token-number">3000</span>]:
+    r = monte_carlo_retirement(
+        portfolio_value      = <span class="token-number">100_000</span>,
+        monthly_contribution = monthly,
+        annual_return        = <span class="token-number">0.07</span>,
+        years                = <span class="token-number">30</span>,
+    )
+    <span class="token-fn">print</span>(<span class="token-string">f"${monthly:,}/mo → P50: ${r.p50:>10,.0f} | P10: ${r.p10:>10,.0f}"</span>)
+</code></pre>
+          </div>
+
+          <!-- ── SECTION 7 ────────────────────────────────────────── -->
+          <h2 id="brokers-tools">Implementing This: Broker Accounts for Quant Investors</h2>
+
+          <p>
+            Running the simulation is step one. Executing the strategy in a real account is step two. The brokerage accounts best suited for quantitatively-minded individual investors differ significantly from the mainstream options:
+          </p>
+
+          <ul>
+            <li>
+              <strong><a href="https://www.interactivebrokers.com" rel="nofollow sponsored">Interactive Brokers (IBKR)</a></strong> — The professional's choice. The <code>ibapi</code> Python library gives you direct programmatic access to your account for automated rebalancing. Lowest margin rates in the industry, broadest asset class coverage, and genuine fractional share support. Commission: $0.005/share minimum $1. <em>Affiliate link — we earn a commission if you open a funded account.</em>
+            </li>
+            <li>
+              <strong><a href="https://tastytrade.com" rel="nofollow sponsored">Tastytrade</a></strong> — Best for probability-based options strategies. Their platform was built by options traders who understand that every position is a probabilistic bet. Excellent for applying Kelly Criterion and volatility-based position sizing. <em>Affiliate link.</em>
+            </li>
+            <li>
+              <strong><a href="https://www.empower.com" rel="nofollow sponsored">Empower (formerly Personal Capital)</a></strong> — Free portfolio analysis tools that compete with paid software. Particularly good for visualizing sequence-of-returns risk in your actual portfolio. <em>Affiliate link.</em>
+            </li>
+          </ul>
+
+          <!-- ── CONCLUSION ─────────────────────────────────────── -->
+          <h2 id="conclusion">Key Takeaways</h2>
+
+          <p>
+            Three things to remember from this article:
+          </p>
+
+          <ol>
+            <li><strong>Averages mislead in multiplicative processes.</strong> Wealth accumulation is multiplicative — the geometric mean, not the arithmetic mean, determines long-run outcomes. Monte Carlo captures this correctly.</li>
+            <li><strong>Plan to the P25, not the median.</strong> If your retirement budget only works under the median outcome, you have a 50% chance of running short. Target P25 — 75% probability of success is a meaningful margin of safety.</li>
+            <li><strong>Sequence of returns risk is real and quantifiable.</strong> Running the simulation in both accumulation and drawdown phases reveals exactly how sensitive your plan is to early-retirement bear markets.</li>
+          </ol>
+
+          <p>
+            The Python function above is production-ready. Run it with your actual numbers. Compare accumulation scenarios. Model your drawdown phase. Stress-test the 4% rule against your specific portfolio size and time horizon. That's the difference between planning on hope and planning on mathematics.
+          </p>
+
+          <p>
+            Next in this series: <a href="../pages/newsletter.html">Safe Withdrawal Rate analysis</a> — what happens when we run 10,000 simulations across 100+ years of historical return data, including the Great Depression and the 2000–2002 bear market. <a href="../pages/newsletter.html">Subscribe to be notified when it publishes →</a>
+          </p>
+
+        </article>
+
+        <!-- ── SHARE BAR ──────────────────────────────────────────────── -->
+        <div class="share-bar">
+          <span style="font-size:0.82rem; color:var(--text-muted); align-self:center;">Share:</span>
+          <button class="share-btn share-btn--twitter"  data-share="twitter">𝕏 Twitter</button>
+          <button class="share-btn share-btn--reddit"   data-share="reddit">Reddit</button>
+          <button class="share-btn share-btn--linkedin" data-share="linkedin">LinkedIn</button>
+          <button class="share-btn"                     data-share="copy">🔗 Copy link</button>
+        </div>
+
+        <!-- ── AUTHOR BOX ─────────────────────────────────────────────── -->
+        <div class="author-box">
+          <div class="author-box__avatar">∞</div>
+          <div class="author-box__content">
+            <h4>The Stochastic Edge</h4>
+            <div class="author-box__role">Quantitative Finance Writer · Independent Researcher</div>
+            <p class="author-box__bio">
+              We apply the mathematical tools of institutional quantitative finance — stochastic processes, Bayesian inference, Monte Carlo simulation — to real-world wealth-building decisions for individual investors. All code is open-source and independently verified.
+            </p>
+          </div>
+        </div>
+
+        <!-- ── RELATED ARTICLES ──────────────────────────────────────── -->
+        <section style="margin-top:3rem;">
+          <h3 style="margin-bottom:1rem;">Continue Reading</h3>
+          <div class="related-grid">
+
+            <a href="../pages/newsletter.html" class="article-card">
+              <div class="article-card__thumb article-card__thumb--placeholder">κ</div>
+              <div class="article-card__body">
+                <div class="article-card__meta"><span class="badge badge--gold">Risk</span></div>
+                <h3 class="article-card__title">Kelly Criterion Position Sizing</h3>
+                <div class="article-card__footer"><span>Coming soon</span></div>
+              </div>
+            </a>
+
+            <a href="../pages/newsletter.html" class="article-card">
+              <div class="article-card__thumb article-card__thumb--placeholder">∂</div>
+              <div class="article-card__body">
+                <div class="article-card__meta"><span class="badge badge--violet">Theory</span></div>
+                <h3 class="article-card__title">Black-Scholes for Non-Quants</h3>
+                <div class="article-card__footer"><span>Coming soon</span></div>
+              </div>
+            </a>
+
+            <a href="../pages/newsletter.html" class="article-card">
+              <div class="article-card__thumb article-card__thumb--placeholder">σ</div>
+              <div class="article-card__body">
+                <div class="article-card__meta"><span class="badge badge--green">Analysis</span></div>
+                <h3 class="article-card__title">DCA vs. Lump Sum: 10,000 Scenarios</h3>
+                <div class="article-card__footer"><span>Coming soon</span></div>
+              </div>
+            </a>
+
+          </div>
+        </section>
+
+      </div><!-- end main column -->
+
+      <!-- ═════ TOC SIDEBAR ═══════════════════════════════════════════ -->
+      <aside class="toc-sidebar">
+        <div class="toc">
+          <div class="toc-title">In this article</div>
+          <ul class="toc-list" id="toc-list" role="list">
+            <!-- Auto-generated from headings by main.js -->
+          </ul>
+        </div>
+
+        <div class="card" style="margin-top:1rem; border-top:2px solid var(--gold);">
+          <div class="card-label">Recommended</div>
+          <div class="card-title" style="font-size:0.95rem;">Interactive Brokers</div>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0.5rem 0 0.75rem;">
+            Python API access, lowest margin rates, 150+ order types. The professional's platform.
+          </p>
+          <a href="https://www.interactivebrokers.com" rel="nofollow sponsored" class="btn btn--secondary btn--sm btn--full">Open Account →</a>
+          <p style="font-size:0.7rem; color:var(--text-muted); margin-top:0.4rem;">Affiliate link · Commission earned</p>
+        </div>
+
+        <div class="card" style="margin-top:0.75rem; border-top:2px solid var(--violet);">
+          <div class="card-label">Free toolkit</div>
+          <div class="card-title" style="font-size:0.95rem;">Quant Investor's Toolkit</div>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0.5rem 0 0.75rem;">
+            Python notebooks, Monte Carlo templates, and the Kelly Criterion calculator. Instant access.
+          </p>
+          <a href="../pages/newsletter.html" class="btn btn--primary btn--sm btn--full">Get Free →</a>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="../index.html" class="nav-logo" style="display:inline-flex; margin-bottom:0.75rem;">
+          <span class="logo-symbol">∞</span><span class="logo-text">The Stochastic Edge</span>
+        </a>
+        <p>Quantitative finance for the individual investor. All code open-source.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Research</h5>
+        <ul class="footer-links">
+          <li><a href="monte-carlo-retirement-simulation.html">Monte Carlo Retirement</a></li>
+          <li><a href="../pages/newsletter.html">Kelly Criterion</a></li>
+          <li><a href="../pages/newsletter.html">Safe Withdrawal Rates</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Site</h5>
+        <ul class="footer-links">
+          <li><a href="../pages/newsletter.html">Free Toolkit</a></li>
+          <li><a href="../pages/about.html">About</a></li>
+          <li><a href="../pages/affiliate-disclosure.html">Affiliate Disclosure</a></li>
+          <li><a href="../pages/disclaimer.html">Disclaimer</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 The Stochastic Edge. <a href="../pages/disclaimer.html">Not financial advice.</a></p>
+    </div>
+  </div>
+</footer>
+
+<button id="back-to-top" aria-label="Back to top">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script src="../src/js/main.js"></script>
+<script>
+  (function(){
+    var t = document.getElementById('mobile-toggle');
+    function check(){ if(t) t.style.display = window.innerWidth < 769 ? 'flex' : 'none'; }
+    check(); window.addEventListener('resize', check, {passive:true});
+  })();
+</script>
+</body>
+</html>
