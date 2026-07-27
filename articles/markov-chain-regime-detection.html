@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Markov Chain Market Regime Detection: Hidden Markov Models in Python | The Stochastic Edge</title>
+  <meta name="description" content="Markets switch between regimes you can't directly observe. Hidden Markov Models infer them from returns alone — the math, the Baum-Welch/Viterbi algorithms, and full Python code.">
+  <meta name="author"  content="The Stochastic Edge">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://thestochasticedge.com/articles/markov-chain-regime-detection.html">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:title"       content="Markov Chain Market Regime Detection — Hidden Markov Models Explained">
+  <meta property="og:description" content="Why regimes are hidden, not observed — and how to infer them from returns using Hidden Markov Models. With Python.">
+  <meta property="og:url"         content="https://thestochasticedge.com/articles/markov-chain-regime-detection.html">
+  <meta property="og:image"       content="https://thestochasticedge.com/src/images/articles/markov-regime-og.png">
+  <meta property="article:published_time" content="2026-07-09T08:00:00Z">
+  <meta property="article:section"        content="Quantitative Finance">
+  <meta property="article:tag" content="Markov Chains">
+  <meta property="article:tag" content="Hidden Markov Models">
+  <meta property="article:tag" content="Regime Detection">
+
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@StochasticEdge">
+  <meta name="twitter:title"       content="Markov Chain Market Regime Detection">
+  <meta name="twitter:description" content="Regimes are hidden, not observed. Here's how HMMs infer them from returns alone, with Python.">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Markov Chain Market Regime Detection: Hidden Markov Models in Python",
+    "description": "Markets switch between regimes that cannot be directly observed. Hidden Markov Models infer them from returns alone — full derivation, algorithms, and Python code.",
+    "image": "https://thestochasticedge.com/src/images/articles/markov-regime-og.png",
+    "datePublished": "2026-07-09T08:00:00Z",
+    "dateModified":  "2026-07-09T08:00:00Z",
+    "author": { "@type": "Person", "name": "The Stochastic Edge", "url": "https://thestochasticedge.com/pages/about.html" },
+    "publisher": { "@type": "Organization", "name": "The Stochastic Edge",
+      "logo": { "@type": "ImageObject", "url": "https://thestochasticedge.com/src/images/icons/logo.png" } },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://thestochasticedge.com/articles/markov-chain-regime-detection.html" },
+    "keywords": "Markov chain, Hidden Markov Model, regime detection, Baum-Welch, Viterbi, hmmlearn, Python"
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#E8A500">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∞</text></svg>">
+</head>
+<body>
+
+<div id="reading-progress" role="progressbar" aria-label="Reading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+  <div id="reading-progress-fill"></div>
+</div>
+
+<div id="cookie-banner" class="cookie-banner hidden" role="dialog">
+  <p>We use analytics cookies. <a href="../pages/privacy-policy.html">Privacy Policy</a>.</p>
+  <div class="cookie-actions">
+    <button id="cookie-dismiss" class="btn btn--secondary btn--sm">Decline</button>
+    <button id="cookie-accept"  class="btn btn--primary  btn--sm">Accept</button>
+  </div>
+</div>
+
+<div id="mobile-menu" class="mobile-menu" role="dialog" aria-label="Navigation menu">
+  <button id="mobile-close" class="btn-icon" style="align-self:flex-end; margin-bottom:1rem;" aria-label="Close menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a href="../categories/index.html">Strategies</a>
+  <a href="../categories/ai-tools.html">AI Tools</a>
+  <a href="../categories/theory.html">Theory</a>
+  <a href="../categories/python.html">Python</a>
+  <a href="../pages/about.html">About</a>
+  <a href="../pages/newsletter.html" class="btn btn--primary btn--full" style="margin-top:1rem;">Get Free Toolkit →</a>
+</div>
+
+<header class="site-header" id="site-header">
+  <nav class="nav" aria-label="Main navigation">
+    <a href="../index.html" class="nav-logo"><span class="logo-symbol">∞</span><span class="logo-text">The Stochastic Edge</span></a>
+    <ul class="nav-links" role="list">
+      <li><a href="../categories/index.html">Strategies</a></li>
+      <li><a href="../categories/ai-tools.html">AI Tools</a></li>
+      <li><a href="../categories/theory.html">Theory</a></li>
+      <li><a href="../categories/python.html">Python</a></li>
+      <li><a href="../pages/about.html">About</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+      </button>
+      <a href="../pages/newsletter.html" class="btn btn--primary btn--sm">Free Toolkit →</a>
+    </div>
+    <button id="mobile-toggle" class="btn-icon" aria-label="Open menu" aria-expanded="false" style="display:none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </nav>
+</header>
+
+<main>
+  <div class="container">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb" style="padding-top:2rem;">
+      <a href="../index.html">Home</a>
+      <span class="sep">›</span>
+      <a href="../categories/theory.html">Theory</a>
+      <span class="sep">›</span>
+      <span class="current">Markov Chain Regime Detection</span>
+    </nav>
+
+    <div class="article-layout">
+      <div>
+        <header class="article-header">
+          <div class="article-meta">
+            <span class="badge badge--sky">Theory</span>
+            <span class="badge badge--violet">Stochastic Processes</span>
+            <span class="badge badge--gold">Python</span>
+          </div>
+          <h1 class="article-title">Markov Chain Market Regime Detection: Hidden Markov Models in Python</h1>
+          <p class="article-subtitle">
+            The market isn't one process — it's several different processes wearing the same ticker symbol. The problem is you never see which one is currently running, only its output. That's not a simple Markov chain problem. It's a hidden one.
+          </p>
+          <div class="article-byline">
+            <div class="avatar">∞</div>
+            <div class="author-info">
+              <div class="author-name">The Stochastic Edge</div>
+              <div class="article-stats">
+                <time datetime="2026-07-09">July 9, 2026</time> ·
+                <span data-reading-time=".prose">— min read</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <article class="prose">
+
+          <p>
+            <strong>A strategy backtested over five years of calm, low-volatility markets will fail the first month a real crisis hits</strong> — not because the strategy was wrong, but because it was fit to one regime and deployed into another. Volatility clustering, trending vs. mean-reverting behavior, correlation breakdowns during crashes: these aren't noise around a single stationary process. They're evidence that the process itself is switching.
+          </p>
+
+          <p>
+            Regime-aware modeling starts from that premise directly. This article builds the actual machinery for it: Markov chains as the underlying concept, then the honest complication that makes plain Markov chains insufficient for markets, then the model that actually gets used in practice.
+          </p>
+
+          <div class="callout callout--gold">
+            <span class="callout__icon">📐</span>
+            <div>
+              <strong>What you'll need:</strong> Python 3.9+, numpy, and <code>hmmlearn</code> — the standard library for this.
+              <code>pip install numpy hmmlearn yfinance</code>
+            </div>
+          </div>
+
+          <h2 id="markov-basics">Markov Chains: The Underlying Idea</h2>
+
+          <p>
+            A Markov chain describes a system that moves between a finite set of states, where the probability of the next state depends only on the current state — not on the full history that led there. Formally, for states <code>{1, ..., S}</code>:
+          </p>
+
+          <div class="math-block">
+P(Z_{t+1} = j | Z_t = i, Z_{t-1}, ..., Z_1)  =  P(Z_{t+1} = j | Z_t = i)  =  a_ij
+
+<span class="comment">// a_ij = transition matrix entry: probability of moving from state i to j</span>
+<span class="comment">// This "memorylessness" is the Markov property. It's a strong, testable</span>
+<span class="comment">// assumption — and a genuinely useful approximation for regime dynamics,</span>
+<span class="comment">// where "how you got to a bear market" matters much less than "you're</span>
+<span class="comment">// currently in one."</span>
+          </div>
+
+          <p>
+            If market regimes were directly observable — if every day came pre-labeled "bull" or "bear" — this would be the whole model. Estimate the transition matrix from labeled history, done. That's not the situation you're actually in.
+          </p>
+
+          <h2 id="the-hidden-part">The Complication Almost Everyone Glosses Over: Regimes Are Hidden</h2>
+
+          <p>
+            You do not observe "which regime the market is in." You observe <em>returns</em>. The regime is a latent variable that you have to infer from the pattern of returns it's producing — different means, different volatilities, different persistence. This is precisely the setting a <strong>Hidden Markov Model (HMM)</strong> was built for: a Markov chain running on an unobservable state sequence, where each hidden state emits observable data according to its own probability distribution.
+          </p>
+
+          <div class="math-block">
+<span class="comment">// HMM structure for S hidden regimes over T observed return periods:</span>
+
+Z_t ∈ {1, ..., S}          <span class="comment">// hidden regime at time t (NOT observed)</span>
+R_t                        <span class="comment">// observed return at time t</span>
+
+δ_i  = P(Z_1 = i)                          <span class="comment">// initial regime distribution</span>
+a_ij = P(Z_{t+1} = j | Z_t = i)             <span class="comment">// transition matrix (as above)</span>
+b_i(r) = P(R_t = r | Z_t = i)               <span class="comment">// emission distribution per regime</span>
+       ~ Normal(μ_i, σ_i²)                  <span class="comment">// Gaussian HMM: each regime has its</span>
+                                            <span class="comment">// own mean and volatility of returns</span>
+          </div>
+
+          <p>
+            A 2-regime Gaussian HMM fit to equity returns typically recovers something intuitive without ever being told to look for it: one state with a small positive mean and low variance (call it "calm/bull"), and one state with a mean near zero or negative and noticeably higher variance ("volatile/bear"). The model isn't told these labels — it discovers the clustering structure in the data and you name the states after the fact by inspecting their fitted parameters.
+          </p>
+
+          <h2 id="fitting">Fitting the Model: Baum-Welch and Viterbi</h2>
+
+          <p>
+            Two algorithms do the actual work, and it's worth knowing what each one answers:
+          </p>
+
+          <ul>
+            <li><strong>Baum-Welch</strong> (a specific case of Expectation-Maximization) — answers <em>"given the observed returns, what transition matrix and emission parameters best explain this data?"</em> This is the fitting/training step.</li>
+            <li><strong>Viterbi</strong> — answers <em>"given a fitted model, what is the single most likely hidden-state sequence that produced this exact data?"</em> This is the decoding step — it's what actually tells you "day 340 was almost certainly Regime 2."</li>
+          </ul>
+
+          <p>
+            In practice, you don't hand-implement either — <code>hmmlearn</code>'s <code>GaussianHMM</code> class runs both under the hood: <code>.fit()</code> calls Baum-Welch, <code>.predict()</code> calls Viterbi.
+          </p>
+
+          <h2 id="python">Full Python Implementation</h2>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python</span>
+              <button class="code-block__copy" aria-label="Copy code">Copy</button>
+            </div>
+            <pre><code class="language-python"><span class="token-keyword">import</span> numpy <span class="token-keyword">as</span> np
+<span class="token-keyword">import</span> pandas <span class="token-keyword">as</span> pd
+<span class="token-keyword">import</span> yfinance <span class="token-keyword">as</span> yf
+<span class="token-keyword">from</span> hmmlearn.hmm <span class="token-keyword">import</span> GaussianHMM
+
+
+<span class="token-keyword">def</span> <span class="token-fn">fit_regime_model</span>(returns: np.ndarray, n_regimes: <span class="token-fn">int</span> = <span class="token-number">2</span>, seed: <span class="token-fn">int</span> = <span class="token-number">42</span>):
+    <span class="token-string">"""
+    Fit a Gaussian HMM to a return series and decode the most likely
+    regime for every historical period.
+
+    returns   : (T,) array of period returns (e.g. daily log returns)
+    n_regimes : number of hidden states to fit. 2 (bull/bear) or 3
+                (bull/chop/bear) are the standard practical choices.
+
+    Returns: (model, hidden_states) where hidden_states is a (T,)
+    array of the Viterbi-decoded regime label for each period.
+    """</span>
+    X = returns.reshape(-<span class="token-number">1</span>, <span class="token-number">1</span>)  <span class="token-comment"># hmmlearn expects 2D: (n_samples, n_features)</span>
+
+    model = GaussianHMM(
+        n_components=n_regimes,
+        covariance_type=<span class="token-string">"full"</span>,
+        n_iter=<span class="token-number">1000</span>,
+        random_state=seed,
+    )
+    model.fit(X)                        <span class="token-comment"># Baum-Welch: estimates A, means, variances</span>
+    hidden_states = model.predict(X)    <span class="token-comment"># Viterbi: decodes the state sequence</span>
+
+    <span class="token-keyword">return</span> model, hidden_states
+
+
+<span class="token-keyword">def</span> <span class="token-fn">describe_regimes</span>(model: GaussianHMM):
+    <span class="token-string">"""Print the fitted mean/vol per regime and the transition matrix."""</span>
+    <span class="token-fn">print</span>(<span class="token-string">"Transition matrix (rows = from, columns = to):"</span>)
+    <span class="token-fn">print</span>(np.round(model.transmat_, <span class="token-number">3</span>))
+    <span class="token-fn">print</span>()
+    <span class="token-keyword">for</span> i <span class="token-keyword">in</span> <span class="token-fn">range</span>(model.n_components):
+        mean = model.means_[i][<span class="token-number">0</span>]
+        var  = model.covars_[i][<span class="token-number">0</span>][<span class="token-number">0</span>]
+        <span class="token-fn">print</span>(<span class="token-string">f"Regime {i}: mean={mean*252:.1%} annualized, "</span>
+              <span class="token-string">f"vol={np.sqrt(var*252):.1%} annualized"</span>)
+
+
+<span class="token-comment"># ── Example: fit on real S&amp;P 500 daily returns ────────────────────────</span>
+data = yf.download(<span class="token-string">"^GSPC"</span>, start=<span class="token-string">"2015-01-01"</span>, progress=<span class="token-keyword">False</span>)
+log_returns = np.log(data[<span class="token-string">"Close"</span>] / data[<span class="token-string">"Close"</span>].shift(<span class="token-number">1</span>)).dropna().values
+
+model, states = fit_regime_model(log_returns, n_regimes=<span class="token-number">2</span>)
+describe_regimes(model)
+
+<span class="token-comment"># Most recent regime classification</span>
+current_regime = states[-<span class="token-number">1</span>]
+<span class="token-fn">print</span>(<span class="token-string">f"\nMost recent trading day classified as Regime {current_regime}"</span>)
+</code></pre>
+          </div>
+
+          <div class="callout callout--info">
+            <span class="callout__icon">ℹ</span>
+            <div><strong>Reading the output:</strong> regimes are returned as integers (0, 1, ...) with no inherent meaning — <code>describe_regimes()</code> exists specifically so you assign the "bull"/"bear" label yourself, after seeing which fitted mean/variance pair corresponds to which number. Don't hardcode the label before fitting; let the data tell you which index is which.</div>
+          </div>
+
+          <div class="article-cta-box">
+            <h4>Get the Full Notebook: Regime-Conditional Kelly Sizing</h4>
+            <p>The toolkit version combines this model directly with the <a href="kelly-criterion-position-sizing.html">Kelly Criterion sizing</a> from the previous article — recomputing μ and σ per detected regime rather than using one blended, regime-blind estimate for the whole history.</p>
+            <a href="../pages/newsletter.html" class="btn btn--primary">Get Free Toolkit →</a>
+          </div>
+
+          <h2 id="choosing-states">Choosing the Number of Regimes</h2>
+
+          <p>
+            Two is the honest starting point — it's identifiable, interpretable, and hard to overfit. Three (adding a "choppy/transitional" middle state) is common in practice and often fits real equity data noticeably better. Beyond three, use an information criterion rather than intuition:
+          </p>
+
+          <div class="math-block">
+BIC  =  −2·ln(L̂)  +  k·ln(T)
+
+<span class="comment">// L̂ = maximized likelihood, k = number of free parameters, T = obs count</span>
+<span class="comment">// Fit models with 2, 3, and 4 regimes; the BIC penalizes extra states</span>
+<span class="comment">// unless they earn their keep in likelihood. Lower BIC wins.</span>
+<span class="comment">// hmmlearn exposes model.score(X) → log-likelihood, so BIC is a few</span>
+<span class="comment">// lines to compute directly from the fitted models.</span>
+          </div>
+
+          <h2 id="limitations">Where This Breaks — Said Plainly</h2>
+
+          <ul>
+            <li><strong>Look-ahead bias is easy to introduce by accident.</strong> <code>model.fit()</code> on the full history and then evaluating regime accuracy on that same history is fitting and grading on the same data. A real backtest re-fits (or at minimum re-decodes) using only data available up to each point in time.</li>
+            <li><strong>The model assumes regimes are genuinely Markovian and Gaussian-emitting.</strong> Real markets have fatter tails and more structure than a Gaussian HMM captures. It's a useful approximation, not a claim about the true data-generating process.</li>
+            <li><strong>Regimes detected in-sample are not the same as regimes predicted out-of-sample.</strong> Viterbi decoding on historical data tells you what already happened with the benefit of hindsight across the whole series. Real-time regime classification (<code>predict</code> on data up to today only) is a harder, noisier problem — expect more label-flipping near genuine transition points.</li>
+            <li><strong>Non-stationarity is the deepest issue.</strong> Even the regimes themselves may not be stable across decades — a "bear market" fitted on 2008 data and one fitted on 2000 data don't necessarily share the same statistical fingerprint. Refit periodically rather than treating one historical fit as permanent.</li>
+          </ul>
+
+          <h2 id="tools">Tools for Building This Further</h2>
+
+          <ul>
+            <li><strong><a href="https://www.tradingview.com" rel="nofollow sponsored">TradingView</a></strong> — for visually overlaying decoded regime periods against price action while you sanity-check a fit before trusting it. <em>Affiliate link.</em></li>
+            <li><strong><a href="https://www.interactivebrokers.com" rel="nofollow sponsored">Interactive Brokers</a></strong> — once a regime classifier is validated, the same <code>ibapi</code> Python connection from the Kelly article lets you condition position sizing on the live-decoded regime automatically. <em>Affiliate link.</em></li>
+          </ul>
+
+          <h2 id="conclusion">Key Takeaways</h2>
+
+          <ol>
+            <li><strong>A plain Markov chain assumes regimes are observed.</strong> Markets never hand you that — you only ever see the emissions (returns), never the hidden label. That gap is exactly what an HMM is for.</li>
+            <li><strong>Baum-Welch fits, Viterbi decodes.</strong> Two different questions, two different algorithms, both wrapped inside <code>hmmlearn.GaussianHMM</code>.</li>
+            <li><strong>Let the fitted parameters name the regimes</strong> — never hardcode which integer means "bull" before inspecting <code>means_</code> and <code>covars_</code>.</li>
+            <li><strong>The honest failure modes matter as much as the model</strong> — look-ahead bias, non-stationarity, and the Gaussian assumption are where naive implementations quietly go wrong.</li>
+          </ol>
+
+          <p>
+            This model becomes genuinely useful the moment it's connected to something downstream that changes behavior based on the detected regime — which is exactly what regime-conditional Kelly sizing does with the <a href="kelly-criterion-position-sizing.html">position-sizing formula from the previous article</a>: recompute μ and σ within each detected regime instead of blending them across regime changes the model exists to detect in the first place.
+          </p>
+
+        </article>
+
+        <div class="share-bar">
+          <span style="font-size:0.82rem; color:var(--text-muted); align-self:center;">Share:</span>
+          <button class="share-btn share-btn--twitter"  data-share="twitter">𝕏 Twitter</button>
+          <button class="share-btn share-btn--reddit"   data-share="reddit">Reddit</button>
+          <button class="share-btn share-btn--linkedin" data-share="linkedin">LinkedIn</button>
+          <button class="share-btn"                     data-share="copy">🔗 Copy link</button>
+        </div>
+
+        <div class="author-box">
+          <div class="author-box__avatar">∞</div>
+          <div class="author-box__content">
+            <h4>The Stochastic Edge</h4>
+            <div class="author-box__role">Quantitative Finance Writer · Independent Researcher</div>
+            <p class="author-box__bio">We apply the mathematical tools of institutional quantitative finance to real-world investing decisions for individual investors. All code is open-source and independently verified.</p>
+          </div>
+        </div>
+
+        <section style="margin-top:3rem;">
+          <h3 style="margin-bottom:1rem;">Continue Reading</h3>
+          <div class="related-grid">
+            <a href="kelly-criterion-position-sizing.html" class="article-card">
+              <div class="article-card__thumb article-card__thumb--placeholder">κ</div>
+              <div class="article-card__body">
+                <div class="article-card__meta"><span class="badge badge--gold">Risk</span></div>
+                <h3 class="article-card__title">Kelly Criterion Position Sizing</h3>
+                <div class="article-card__footer"><span>July 2026</span></div>
+              </div>
+            </a>
+            <a href="monte-carlo-retirement-simulation.html" class="article-card">
+              <div class="article-card__thumb article-card__thumb--placeholder">∫</div>
+              <div class="article-card__body">
+                <div class="article-card__meta"><span class="badge badge--violet">Simulation</span></div>
+                <h3 class="article-card__title">Monte Carlo Retirement Simulation</h3>
+                <div class="article-card__footer"><span>June 2026</span></div>
+              </div>
+            </a>
+            <a href="../pages/newsletter.html" class="article-card">
+              <div class="article-card__thumb article-card__thumb--placeholder">∂</div>
+              <div class="article-card__body">
+                <div class="article-card__meta"><span class="badge badge--violet">Theory</span></div>
+                <h3 class="article-card__title">Black-Scholes for Non-Quants</h3>
+                <div class="article-card__footer"><span>Coming soon</span></div>
+              </div>
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <aside class="toc-sidebar">
+        <div class="toc">
+          <div class="toc-title">In this article</div>
+          <ul class="toc-list" id="toc-list" role="list"></ul>
+        </div>
+        <div class="card" style="margin-top:1rem; border-top:2px solid var(--gold);">
+          <div class="card-label">Recommended</div>
+          <div class="card-title" style="font-size:0.95rem;">TradingView</div>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0.5rem 0 0.75rem;">Overlay decoded regimes against price action to sanity-check a fit.</p>
+          <a href="https://www.tradingview.com" rel="nofollow sponsored" class="btn btn--secondary btn--sm btn--full">Try TradingView →</a>
+          <p style="font-size:0.7rem; color:var(--text-muted); margin-top:0.4rem;">Affiliate link · Commission earned</p>
+        </div>
+        <div class="card" style="margin-top:0.75rem; border-top:2px solid var(--violet);">
+          <div class="card-label">Free toolkit</div>
+          <div class="card-title" style="font-size:0.95rem;">Quant Investor's Toolkit</div>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0.5rem 0 0.75rem;">Includes regime-conditional Kelly sizing built on this model.</p>
+          <a href="../pages/newsletter.html" class="btn btn--primary btn--sm btn--full">Get Free →</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="../index.html" class="nav-logo" style="display:inline-flex; margin-bottom:0.75rem;"><span class="logo-symbol">∞</span><span class="logo-text">The Stochastic Edge</span></a>
+        <p>Quantitative finance for the individual investor. All code open-source.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Research</h5>
+        <ul class="footer-links">
+          <li><a href="monte-carlo-retirement-simulation.html">Monte Carlo Retirement</a></li>
+          <li><a href="kelly-criterion-position-sizing.html">Kelly Criterion</a></li>
+          <li><a href="markov-chain-regime-detection.html">Markov Regime Detection</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Site</h5>
+        <ul class="footer-links">
+          <li><a href="../pages/newsletter.html">Free Toolkit</a></li>
+          <li><a href="../pages/about.html">About</a></li>
+          <li><a href="../pages/affiliate-disclosure.html">Affiliate Disclosure</a></li>
+          <li><a href="../pages/disclaimer.html">Disclaimer</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 The Stochastic Edge. <a href="../pages/disclaimer.html">Not financial advice.</a></p></div>
+  </div>
+</footer>
+
+<button id="back-to-top" aria-label="Back to top">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script src="../src/js/main.js"></script>
+<script>
+  (function(){
+    var t = document.getElementById('mobile-toggle');
+    function check(){ if(t) t.style.display = window.innerWidth < 769 ? 'flex' : 'none'; }
+    check(); window.addEventListener('resize', check, {passive:true});
+  })();
+</script>
+</body>
+</html>

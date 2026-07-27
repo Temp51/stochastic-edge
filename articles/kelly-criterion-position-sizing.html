@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Kelly Criterion Position Sizing: The Optimal Formula for Bets and Portfolios | The Stochastic Edge</title>
+  <meta name="description" content="The Kelly Criterion, derived properly: single-bet formula, why full Kelly is too violent to survive, the multi-asset covariance-matrix extension, and complete Python code.">
+  <meta name="author"  content="The Stochastic Edge">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://thestochasticedge.com/articles/kelly-criterion-position-sizing.html">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:title"       content="Kelly Criterion Position Sizing: From Single Bets to Full Portfolios">
+  <meta property="og:description" content="The complete derivation, the multi-asset covariance-matrix extension, and the estimation-error problem that makes full Kelly dangerous. With Python.">
+  <meta property="og:url"         content="https://thestochasticedge.com/articles/kelly-criterion-position-sizing.html">
+  <meta property="og:image"       content="https://thestochasticedge.com/src/images/articles/kelly-criterion-og.png">
+  <meta property="article:published_time" content="2026-07-06T08:00:00Z">
+  <meta property="article:section"        content="Quantitative Finance">
+  <meta property="article:tag" content="Kelly Criterion">
+  <meta property="article:tag" content="Position Sizing">
+  <meta property="article:tag" content="Portfolio Theory">
+
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@StochasticEdge">
+  <meta name="twitter:title"       content="Kelly Criterion: From Single Bets to Full Portfolios">
+  <meta name="twitter:description" content="The covariance-matrix extension, the estimation-error problem, and complete Python code.">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Kelly Criterion Position Sizing: The Optimal Formula for Bets and Portfolios",
+    "description": "The Kelly Criterion derived properly: single-bet formula, the multi-asset covariance-matrix extension, why full Kelly is too violent to survive, and complete Python code.",
+    "image": "https://thestochasticedge.com/src/images/articles/kelly-criterion-og.png",
+    "datePublished": "2026-07-06T08:00:00Z",
+    "dateModified":  "2026-07-06T08:00:00Z",
+    "author": { "@type": "Person", "name": "The Stochastic Edge", "url": "https://thestochasticedge.com/pages/about.html" },
+    "publisher": { "@type": "Organization", "name": "The Stochastic Edge",
+      "logo": { "@type": "ImageObject", "url": "https://thestochasticedge.com/src/images/icons/logo.png" } },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://thestochasticedge.com/articles/kelly-criterion-position-sizing.html" },
+    "keywords": "Kelly Criterion, position sizing, portfolio optimization, fractional Kelly, covariance matrix, Python"
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#E8A500">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>∞</text></svg>">
+</head>
+<body>
+
+<div id="reading-progress" role="progressbar" aria-label="Reading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+  <div id="reading-progress-fill"></div>
+</div>
+
+<div id="cookie-banner" class="cookie-banner hidden" role="dialog">
+  <p>We use analytics cookies. <a href="../pages/privacy-policy.html">Privacy Policy</a>.</p>
+  <div class="cookie-actions">
+    <button id="cookie-dismiss" class="btn btn--secondary btn--sm">Decline</button>
+    <button id="cookie-accept"  class="btn btn--primary  btn--sm">Accept</button>
+  </div>
+</div>
+
+<div id="mobile-menu" class="mobile-menu" role="dialog" aria-label="Navigation menu">
+  <button id="mobile-close" class="btn-icon" style="align-self:flex-end; margin-bottom:1rem;" aria-label="Close menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a href="../categories/index.html">Strategies</a>
+  <a href="../categories/ai-tools.html">AI Tools</a>
+  <a href="../categories/theory.html">Theory</a>
+  <a href="../categories/python.html">Python</a>
+  <a href="../pages/about.html">About</a>
+  <a href="../pages/newsletter.html" class="btn btn--primary btn--full" style="margin-top:1rem;">Get Free Toolkit →</a>
+</div>
+
+<header class="site-header" id="site-header">
+  <nav class="nav" aria-label="Main navigation">
+    <a href="../index.html" class="nav-logo"><span class="logo-symbol">∞</span><span class="logo-text">The Stochastic Edge</span></a>
+    <ul class="nav-links" role="list">
+      <li><a href="../categories/index.html">Strategies</a></li>
+      <li><a href="../categories/ai-tools.html">AI Tools</a></li>
+      <li><a href="../categories/theory.html">Theory</a></li>
+      <li><a href="../categories/python.html">Python</a></li>
+      <li><a href="../pages/about.html">About</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+      </button>
+      <a href="../pages/newsletter.html" class="btn btn--primary btn--sm">Free Toolkit →</a>
+    </div>
+    <button id="mobile-toggle" class="btn-icon" aria-label="Open menu" aria-expanded="false" style="display:none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </nav>
+</header>
+
+<main>
+  <div class="container">
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb" style="padding-top:2rem;">
+      <a href="../index.html">Home</a>
+      <span class="sep">›</span>
+      <a href="../categories/index.html">Strategies</a>
+      <span class="sep">›</span>
+      <span class="current">Kelly Criterion Position Sizing</span>
+    </nav>
+
+    <div class="article-layout">
+      <div>
+        <header class="article-header">
+          <div class="article-meta">
+            <span class="badge badge--gold">Risk</span>
+            <span class="badge badge--violet">Portfolio Theory</span>
+            <span class="badge badge--sky">Python</span>
+          </div>
+          <h1 class="article-title">Kelly Criterion Position Sizing: The Optimal Formula for Bets and Portfolios</h1>
+          <p class="article-subtitle">
+            Strategy answers "what to buy." Position sizing answers "how much" — and it's the question most investors never formalize. The Kelly Criterion is the mathematically growth-optimal answer, from a single coin flip to a full correlated portfolio.
+          </p>
+          <div class="article-byline">
+            <div class="avatar">∞</div>
+            <div class="author-info">
+              <div class="author-name">The Stochastic Edge</div>
+              <div class="article-stats">
+                <time datetime="2026-07-06">July 6, 2026</time> ·
+                <span data-reading-time=".prose">— min read</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <article class="prose">
+
+          <p>
+            <strong>Two traders can share an identical edge and reach opposite outcomes.</strong> Same signal, same win rate, same expected value per trade. One compounds steadily for a decade. The other blows up in eighteen months. The difference was never the edge. It was how much of the bankroll rode on it each time.
+          </p>
+
+          <p>
+            The Kelly Criterion is the formula that answers that question precisely: given a genuine statistical edge, what fraction of capital maximizes long-run compound growth? It was derived in 1956 by a Bell Labs researcher solving a problem that had nothing to do with markets, and it has since become one of the few pieces of gambling theory taken seriously by professional portfolio managers — with real teeth once you extend it past a single bet into a correlated portfolio.
+          </p>
+
+          <div class="callout callout--gold">
+            <span class="callout__icon">📐</span>
+            <div>
+              <strong>What you'll need:</strong> Python 3.9+, numpy. All code runs locally, no paid data required.
+              <code>pip install numpy</code>
+            </div>
+          </div>
+
+          <h2 id="origin">Where This Actually Comes From</h2>
+
+          <p>
+            John Kelly published <em>A New Interpretation of Information Rate</em> in 1956 — a paper about noisy telephone signal transmission for AT&amp;T, not gambling. Kelly showed that a gambler with private information about the outcome of a bet (a private "signal," in information-theory terms) has a mathematically optimal fraction of bankroll to wager, one that maximizes the long-run exponential growth rate of wealth. Ed Thorp later carried the same math into blackjack card counting and then into running one of the earliest successful quantitative hedge funds. The lineage from information theory to card counting to portfolio management is not a coincidence — it's the same optimization problem wearing three different costumes.
+          </p>
+
+          <h2 id="single-bet">The Single-Bet Formula</h2>
+
+          <p>
+            Kelly's original setting: a binary bet with win probability <code>p</code>, loss probability <code>q = 1 − p</code>, and payout odds <code>b</code> (a win returns <code>b</code> times the wager; a loss forfeits the wager). The growth-optimal fraction of bankroll to risk is:
+          </p>
+
+          <div class="math-block">
+f* = (bp − q) / b  =  p − q/b
+
+<span class="comment">// Derivation sketch: wealth after n rounds compounds multiplicatively.</span>
+<span class="comment">// Maximizing E[ln(wealth)] — not E[wealth] — is what makes this the</span>
+<span class="comment">// GROWTH-optimal fraction rather than the EV-optimal one.</span>
+<span class="comment">// EV-maximizing would say "bet everything, every time" — and go broke</span>
+<span class="comment">// with probability 1 as soon as q &gt; 0. Log-utility is what saves you.</span>
+          </div>
+
+          <p>
+            That last comment is the entire reason Kelly matters. Maximizing expected value of wealth and maximizing expected value of <em>log</em> wealth give wildly different answers once you compound over many rounds. EV-maximization says bet everything on any positive-EV wager. Kelly says something much more conservative — and it's the version that doesn't go to zero.
+          </p>
+
+          <h2 id="continuous-case">The Continuous Case: What Investors Actually Use</h2>
+
+          <p>
+            Markets don't offer discrete win/lose bets with fixed odds — they offer a continuous return distribution. The investing version of Kelly, for a single risky asset with expected excess return <code>μ</code> (over the risk-free rate) and variance <code>σ²</code>, reduces to a remarkably clean form:
+          </p>
+
+          <div class="math-block">
+f* = μ / σ²
+
+<span class="comment">// Sanity check via Sharpe ratio S = μ/σ:</span>
+<span class="comment">// f* = S/σ — the growth-optimal leverage is your Sharpe ratio</span>
+<span class="comment">// divided by your volatility. Higher edge → size up.</span>
+<span class="comment">// Higher volatility for the SAME edge → size down, fast (σ² in the</span>
+<span class="comment">// denominator means sizing falls off much quicker than edge grows).</span>
+          </div>
+
+          <h2 id="why-full-kelly-hurts">Why Full Kelly Is Too Violent to Actually Run</h2>
+
+          <p>
+            Full Kelly is growth-optimal <em>in expectation</em>, but it is not the same thing as comfortable, or even survivable in practice, for two separate reasons.
+          </p>
+
+          <p><strong>Reason one: the growth-vs-variance trade-off is steeply asymmetric near the optimum.</strong> Bet a fraction <code>c</code> of the full Kelly size (so <code>c = 1</code> is full Kelly, <code>c = 0.5</code> is half-Kelly) and the growth rate you retain, relative to full Kelly's maximum, works out to a clean closed form:</p>
+
+          <div class="math-block">
+g(c) / g_max  =  2c − c²  =  c(2 − c)
+
+<span class="comment">// At c = 0.5 (half-Kelly):  0.5 × 1.5 = 0.75 → 75% of the growth rate</span>
+<span class="comment">// Variance of the position scales with c², so:</span>
+<span class="comment">//   volatility (std dev) at c=0.5  → 50% of full-Kelly volatility</span>
+<span class="comment">//   variance             at c=0.5  → 25% of full-Kelly variance</span>
+<span class="comment">//</span>
+<span class="comment">// Half-Kelly: give up 1/4 of the growth rate, keep 1/4 of the variance.</span>
+<span class="comment">// This asymmetry is why almost no serious practitioner runs full Kelly.</span>
+          </div>
+
+          <p>
+            <strong>Reason two, and the more dangerous one in practice: you don't know the true <code>μ</code>.</strong> Every formula above assumes you know the real expected return exactly. You don't — you have a sample estimate from historical data, and that estimate is far noisier than most people assume. Here's the derivation, worth doing once so it's not just a rule of thumb:
+          </p>
+
+          <div class="math-block">
+<span class="comment">// Standard error of an ANNUALIZED mean-return estimate, using N years</span>
+<span class="comment">// of daily data (T = 252N days), starting from daily std dev σ_d:</span>
+
+SE(daily mean)     = σ_d / √T
+Annualized est.    = 252 × (daily mean)
+SE(annualized est.)= 252 × σ_d/√T  =  252σ_d/√(252N)  =  σ_d√252 / √N
+
+<span class="key">SE(μ̂_annual, using N years of data)  =  σ_annual / √N</span>
+
+<span class="comment">// Set N = 1: SE(μ̂) = σ_annual. Your ENTIRE one-year return estimate</span>
+<span class="comment">// carries a margin of error as large as annual volatility itself.</span>
+<span class="comment">// With a 20-year backtest: SE = σ_annual / √20 ≈ σ_annual / 4.5</span>
+<span class="comment">// — still a huge relative error on the number that f* = μ/σ² depends</span>
+<span class="comment">// on LINEARLY. Variance, by contrast, is estimated far more precisely</span>
+<span class="comment">// from the same data. Kelly sizing computed from a backtested μ is</span>
+<span class="comment">// only ever as trustworthy as that noisy numerator.</span>
+          </div>
+
+          <div class="callout callout--info">
+            <span class="callout__icon">ℹ</span>
+            <div><strong>The practical upshot:</strong> full Kelly, computed from a backtested edge, is really "full Kelly according to an estimate you should not fully trust." This is the actual, mathematical justification for fractional Kelly — not just risk aversion, but estimation-error hedging.</div>
+          </div>
+
+          <h2 id="fractional-kelly">Fractional Kelly in Practice</h2>
+
+          <p>
+            Professional users of Kelly sizing — Thorp among the earliest and most explicit about it — typically run somewhere between a quarter and a half of the full Kelly fraction. Given the derivation above, a clean way to think about the choice: pick <code>c</code> low enough that you can survive being meaningfully wrong about <code>μ</code>, since you always are, to some degree.
+          </p>
+
+          <h2 id="multi-asset">The Part Most Retail Content Skips: Multi-Asset Kelly</h2>
+
+          <p>
+            Almost every accessible explanation of Kelly stops at a single bet or a single asset. It doesn't stop there in practice — real portfolios hold many correlated positions, and correlation changes the optimal sizing substantially. The extension replaces scalar division with a matrix inversion:
+          </p>
+
+          <div class="math-block">
+w*  =  Σ⁻¹ (μ − r_f · 1)
+
+Where:
+  w*   = vector of growth-optimal portfolio weights, one per asset
+  Σ    = covariance matrix of asset returns (n × n)
+  μ    = vector of expected returns for each asset
+  r_f  = risk-free rate
+  1    = vector of ones (same length as μ)
+
+<span class="comment">// This is not a coincidence or approximation: the growth-optimal Kelly</span>
+<span class="comment">// portfolio is IDENTICAL to the maximum-Sharpe-ratio portfolio from</span>
+<span class="comment">// classical mean-variance optimization — just at a specific leverage.</span>
+<span class="comment">// Two different 20th-century derivations (Markowitz 1952, Kelly via</span>
+<span class="comment">// Kelly 1956 / Latané 1959) land on the same portfolio direction.</span>
+          </div>
+
+          <p>
+            The inverse covariance matrix is doing something specific and non-obvious: it accounts for how each asset's risk diversifies against the others. An asset with a mediocre or even negative expected return can still receive a positive Kelly weight if it reduces total portfolio variance enough — the formula sizes the portfolio as a system, not as a sum of independently-sized bets. Sizing each asset independently with the single-asset formula and ignoring correlation is one of the most common — and most costly — simplifications in practice.
+          </p>
+
+          <h2 id="python">Full Python Implementation</h2>
+
+          <p>Both the single-asset and multi-asset versions, with fractional scaling built in:</p>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python</span>
+              <button class="code-block__copy" aria-label="Copy code">Copy</button>
+            </div>
+            <pre><code class="language-python"><span class="token-keyword">import</span> numpy <span class="token-keyword">as</span> np
+
+
+<span class="token-keyword">def</span> <span class="token-fn">kelly_single_asset</span>(mu: <span class="token-fn">float</span>, sigma: <span class="token-fn">float</span>, kelly_fraction: <span class="token-fn">float</span> = <span class="token-number">1.0</span>) -&gt; <span class="token-fn">float</span>:
+    <span class="token-string">"""
+    Growth-optimal position size for a single risky asset.
+
+    mu             : expected EXCESS return (over risk-free), annualized, decimal
+    sigma          : annualized volatility (std dev), decimal
+    kelly_fraction : scaling factor c. c=1.0 is full Kelly, c=0.5 is half-Kelly.
+
+    Returns the fraction of capital to allocate (can exceed 1.0 = leverage).
+    """</span>
+    full_kelly = mu / (sigma ** <span class="token-number">2</span>)
+    <span class="token-keyword">return</span> kelly_fraction * full_kelly
+
+
+<span class="token-keyword">def</span> <span class="token-fn">kelly_multi_asset</span>(
+    mu: np.ndarray,
+    cov: np.ndarray,
+    risk_free: <span class="token-fn">float</span> = <span class="token-number">0.0</span>,
+    kelly_fraction: <span class="token-fn">float</span> = <span class="token-number">0.5</span>,
+) -&gt; np.ndarray:
+    <span class="token-string">"""
+    Growth-optimal portfolio weights across N correlated assets.
+
+    mu             : (N,) array of annualized expected returns
+    cov            : (N, N) annualized covariance matrix of returns
+    risk_free      : risk-free rate, annualized decimal
+    kelly_fraction : scaling factor c, applied uniformly across all weights
+
+    Returns an (N,) array of portfolio weights. Weights can be negative
+    (short) or sum to more than 1.0 (leverage) — that is correct Kelly
+    behavior, not a bug. Clip/normalize externally if your broker or
+    risk framework requires it.
+    """</span>
+    excess = mu - risk_free
+    cov_inv = np.linalg.inv(cov)
+    full_kelly_weights = cov_inv @ excess
+    <span class="token-keyword">return</span> kelly_fraction * full_kelly_weights
+
+
+<span class="token-comment"># ── Example: single asset ─────────────────────────────────────────────</span>
+f_full = kelly_single_asset(mu=<span class="token-number">0.08</span>, sigma=<span class="token-number">0.20</span>, kelly_fraction=<span class="token-number">1.0</span>)
+f_half = kelly_single_asset(mu=<span class="token-number">0.08</span>, sigma=<span class="token-number">0.20</span>, kelly_fraction=<span class="token-number">0.5</span>)
+<span class="token-fn">print</span>(<span class="token-string">f"Full Kelly:  {f_full:.2%} of capital"</span>)
+<span class="token-fn">print</span>(<span class="token-string">f"Half Kelly:  {f_half:.2%} of capital"</span>)
+
+<span class="token-comment"># ── Example: three correlated assets ──────────────────────────────────</span>
+mu  = np.array([<span class="token-number">0.09</span>, <span class="token-number">0.06</span>, <span class="token-number">0.04</span>])            <span class="token-comment"># expected annual returns</span>
+vol = np.array([<span class="token-number">0.22</span>, <span class="token-number">0.15</span>, <span class="token-number">0.08</span>])            <span class="token-comment"># annual volatilities</span>
+corr = np.array([                            <span class="token-comment"># correlation matrix</span>
+    [<span class="token-number">1.00</span>, <span class="token-number">0.40</span>, <span class="token-number">0.10</span>],
+    [<span class="token-number">0.40</span>, <span class="token-number">1.00</span>, <span class="token-number">0.05</span>],
+    [<span class="token-number">0.10</span>, <span class="token-number">0.05</span>, <span class="token-number">1.00</span>],
+])
+cov = np.outer(vol, vol) * corr              <span class="token-comment"># build covariance from vol + correlation</span>
+
+weights = kelly_multi_asset(mu, cov, risk_free=<span class="token-number">0.04</span>, kelly_fraction=<span class="token-number">0.5</span>)
+<span class="token-keyword">for</span> i, w <span class="token-keyword">in</span> <span class="token-fn">enumerate</span>(weights):
+    <span class="token-fn">print</span>(<span class="token-string">f"Asset {i+1}: {w:.1%} of capital"</span>)
+<span class="token-fn">print</span>(<span class="token-string">f"Total leverage: {weights.sum():.2f}x"</span>)
+</code></pre>
+          </div>
+
+          <div class="article-cta-box">
+            <h4>Get the Full Notebook: Kelly Sizing Backtested Against Real Sequences</h4>
+            <p>The toolkit version adds a Monte Carlo comparison — full Kelly vs. half vs. quarter-Kelly, run across 10,000 simulated equity curves, so you can see the drawdown distribution each fraction actually produces before you pick one.</p>
+            <a href="../pages/newsletter.html" class="btn btn--primary">Get Free Toolkit →</a>
+          </div>
+
+          <h2 id="limitations">Where This Breaks — Said Plainly</h2>
+
+          <ul>
+            <li><strong>Kelly assumes you know your edge.</strong> As shown above, you almost never know it precisely. Every output of this formula is only as good as the μ estimate feeding it.</li>
+            <li><strong>Kelly assumes stationarity.</strong> The formula optimizes for a return distribution that stays constant. Real markets shift regimes — which is exactly the subject of the next article in this series.</li>
+            <li><strong>Kelly ignores transaction costs, taxes, and borrowing constraints.</strong> The leverage a covariance matrix recommends may not be available to you, or may not survive real-world frictions once you try to implement it.</li>
+            <li><strong>Full Kelly's drawdowns are brutal even when the math is followed perfectly.</strong> A well-known property of growth-optimal betting: you should expect to see paper losses of 50%+ from a peak at some point, even when every assumption holds exactly. This is not a sign the strategy failed — it's the strategy working as designed. Most people cannot stomach that in practice, which is the real-world argument for fractional Kelly that no formula captures.</li>
+          </ul>
+
+          <h2 id="implementing">Implementing This With a Real Account</h2>
+
+          <p>Position-sizing math is only useful once it can actually be executed. Two broker platforms worth knowing for this specifically:</p>
+
+          <ul>
+            <li><strong><a href="https://www.interactivebrokers.com" rel="nofollow sponsored">Interactive Brokers</a></strong> — programmatic access via the <code>ibapi</code> Python library means the weight vector above can be wired directly into order placement rather than manually re-entered. <em>Affiliate link.</em></li>
+            <li><strong><a href="https://tastytrade.com" rel="nofollow sponsored">Tastytrade</a></strong> — if applying fractional Kelly to defined-risk options structures rather than raw equity positions, their platform is built by traders who think in exactly this probabilistic frame. <em>Affiliate link.</em></li>
+          </ul>
+
+          <h2 id="conclusion">Key Takeaways</h2>
+
+          <ol>
+            <li><strong>Kelly maximizes E[log wealth], not E[wealth]</strong> — that single substitution is the entire reason the formula avoids ruin where naive EV-maximizing bet sizing does not.</li>
+            <li><strong>Half-Kelly gives up 25% of the growth rate for 75% less variance</strong> — a genuinely favorable trade for almost anyone, derived above rather than asserted.</li>
+            <li><strong>Estimation error in μ, not the formula itself, is the real danger</strong> of running full Kelly — your edge is never known as precisely as the math assumes.</li>
+            <li><strong>Correlation changes everything</strong> once you move past a single bet — size the portfolio as a system via the covariance matrix, not asset-by-asset.</li>
+          </ol>
+
+          <p>
+            Next in this series: Kelly assumes the return distribution you're sizing against is stable. It usually isn't. <a href="markov-chain-regime-detection.html">Markov Chain Market Regime Detection</a> covers what to do about that — including how regime-conditional sizing combines directly with the fractional Kelly weights above.
+          </p>
+
+        </article>
+
+        <div class="share-bar">
+          <span style="font-size:0.82rem; color:var(--text-muted); align-self:center;">Share:</span>
+          <button class="share-btn share-btn--twitter"  data-share="twitter">𝕏 Twitter</button>
+          <button class="share-btn share-btn--reddit"   data-share="reddit">Reddit</button>
+          <button class="share-btn share-btn--linkedin" data-share="linkedin">LinkedIn</button>
+          <button class="share-btn"                     data-share="copy">🔗 Copy link</button>
+        </div>
+
+        <div class="author-box">
+          <div class="author-box__avatar">∞</div>
+          <div class="author-box__content">
+            <h4>The Stochastic Edge</h4>
+            <div class="author-box__role">Quantitative Finance Writer · Independent Researcher</div>
+            <p class="author-box__bio">We apply the mathematical tools of institutional quantitative finance to real-world investing decisions for individual investors. All code is open-source and independently verified.</p>
+          </div>
+        </div>
+
+        <section style="margin-top:3rem;">
+          <h3 style="margin-bottom:1rem;">Continue Reading</h3>
+          <div class="related-grid">
+            <a href="monte-carlo-retirement-simulation.html" class="article-card">
+              <div class="article-card__thumb article-card__thumb--placeholder">∫</div>
+              <div class="article-card__body">
+                <div class="article-card__meta"><span class="badge badge--violet">Simulation</span></div>
+                <h3 class="article-card__title">Monte Carlo Retirement Simulation</h3>
+                <div class="article-card__footer"><span>June 2026</span></div>
+              </div>
+            </a>
+            <a href="markov-chain-regime-detection.html" class="article-card">
+              <div class="article-card__thumb article-card__thumb--placeholder">ρ</div>
+              <div class="article-card__body">
+                <div class="article-card__meta"><span class="badge badge--sky">Theory</span></div>
+                <h3 class="article-card__title">Markov Chain Market Regime Detection</h3>
+                <div class="article-card__footer"><span>July 2026</span></div>
+              </div>
+            </a>
+            <a href="../pages/newsletter.html" class="article-card">
+              <div class="article-card__thumb article-card__thumb--placeholder">σ</div>
+              <div class="article-card__body">
+                <div class="article-card__meta"><span class="badge badge--green">Analysis</span></div>
+                <h3 class="article-card__title">DCA vs. Lump Sum: 10,000 Scenarios</h3>
+                <div class="article-card__footer"><span>Coming soon</span></div>
+              </div>
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <aside class="toc-sidebar">
+        <div class="toc">
+          <div class="toc-title">In this article</div>
+          <ul class="toc-list" id="toc-list" role="list"></ul>
+        </div>
+        <div class="card" style="margin-top:1rem; border-top:2px solid var(--gold);">
+          <div class="card-label">Recommended</div>
+          <div class="card-title" style="font-size:0.95rem;">Interactive Brokers</div>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0.5rem 0 0.75rem;">Python API access for wiring Kelly weights directly into execution.</p>
+          <a href="https://www.interactivebrokers.com" rel="nofollow sponsored" class="btn btn--secondary btn--sm btn--full">Open Account →</a>
+          <p style="font-size:0.7rem; color:var(--text-muted); margin-top:0.4rem;">Affiliate link · Commission earned</p>
+        </div>
+        <div class="card" style="margin-top:0.75rem; border-top:2px solid var(--violet);">
+          <div class="card-label">Free toolkit</div>
+          <div class="card-title" style="font-size:0.95rem;">Quant Investor's Toolkit</div>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0.5rem 0 0.75rem;">Includes the Kelly vs. fractional-Kelly Monte Carlo comparison notebook.</p>
+          <a href="../pages/newsletter.html" class="btn btn--primary btn--sm btn--full">Get Free →</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="../index.html" class="nav-logo" style="display:inline-flex; margin-bottom:0.75rem;"><span class="logo-symbol">∞</span><span class="logo-text">The Stochastic Edge</span></a>
+        <p>Quantitative finance for the individual investor. All code open-source.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Research</h5>
+        <ul class="footer-links">
+          <li><a href="monte-carlo-retirement-simulation.html">Monte Carlo Retirement</a></li>
+          <li><a href="kelly-criterion-position-sizing.html">Kelly Criterion</a></li>
+          <li><a href="markov-chain-regime-detection.html">Markov Regime Detection</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Site</h5>
+        <ul class="footer-links">
+          <li><a href="../pages/newsletter.html">Free Toolkit</a></li>
+          <li><a href="../pages/about.html">About</a></li>
+          <li><a href="../pages/affiliate-disclosure.html">Affiliate Disclosure</a></li>
+          <li><a href="../pages/disclaimer.html">Disclaimer</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 The Stochastic Edge. <a href="../pages/disclaimer.html">Not financial advice.</a></p></div>
+  </div>
+</footer>
+
+<button id="back-to-top" aria-label="Back to top">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script src="../src/js/main.js"></script>
+<script>
+  (function(){
+    var t = document.getElementById('mobile-toggle');
+    function check(){ if(t) t.style.display = window.innerWidth < 769 ? 'flex' : 'none'; }
+    check(); window.addEventListener('resize', check, {passive:true});
+  })();
+</script>
+</body>
+</html>

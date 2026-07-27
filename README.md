@@ -4,7 +4,7 @@ Quantitative finance blog — static HTML/CSS/JS, zero framework, zero build ste
 
 ## Status
 
-**Core site: complete and navigable.** 1 published article, 4 category hubs, all legal pages, newsletter capture page, 404, SEO files (robots.txt, sitemap.xml, manifest.json).
+**Core site: complete and navigable.** 3 published articles (Monte Carlo Retirement, Kelly Criterion, Markov Chain Regime Detection), 4 category hubs, all legal pages, newsletter capture page, 404, SEO files (robots.txt, sitemap.xml, manifest.json). 19 more articles queued in the Fedora Launch Lab PDF's Part B backlog.
 
 **Not yet wired:** the newsletter form is front-end only — it shows a fake success message but does not send data anywhere yet. See "Connect a real email provider" below before you rely on it.
 
