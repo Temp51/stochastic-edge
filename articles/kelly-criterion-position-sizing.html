@@ -242,6 +242,67 @@ SE(annualized est.)= 252 × σ_d/√T  =  252σ_d/√(252N)  =  σ_d√252 / √
             <div><strong>The practical upshot:</strong> full Kelly, computed from a backtested edge, is really "full Kelly according to an estimate you should not fully trust." This is the actual, mathematical justification for fractional Kelly — not just risk aversion, but estimation-error hedging.</div>
           </div>
 
+          <div class="calc-section" id="kelly-single-calc" style="margin:2rem 0;">
+            <div class="calc-header">
+              <span class="eyebrow">Try it — the curve above, live</span>
+              <h3 style="margin-bottom:0.3rem;">Kelly Fraction Explorer</h3>
+              <p style="font-size:0.9rem;">Drag the fraction slider. Growth retained and variance move at different rates — exactly as derived above, not approximated.</p>
+            </div>
+            <div class="calc-grid">
+              <div class="calc-inputs">
+                <div class="calc-input-group">
+                  <label for="ks-mu">Expected annual excess return (μ) <span class="value-display" id="ks-mu-val">8%</span></label>
+                  <input type="range" id="ks-mu" min="2" max="20" step="0.5" value="8">
+                </div>
+                <div class="calc-input-group">
+                  <label for="ks-sigma">Annual volatility (σ) <span class="value-display" id="ks-sigma-val">20%</span></label>
+                  <input type="range" id="ks-sigma" min="5" max="40" step="1" value="20">
+                </div>
+                <div class="calc-input-group">
+                  <label for="ks-c">Kelly fraction (c) <span class="value-display" id="ks-c-val">1.00×</span></label>
+                  <input type="range" id="ks-c" min="0" max="2" step="0.05" value="1">
+                </div>
+                <div style="display:flex; gap:0.4rem; margin-top:0.25rem;">
+                  <button type="button" class="btn btn--secondary btn--sm" data-preset="0.25">Quarter</button>
+                  <button type="button" class="btn btn--secondary btn--sm" data-preset="0.5">Half</button>
+                  <button type="button" class="btn btn--secondary btn--sm" data-preset="1.0">Full</button>
+                </div>
+              </div>
+              <div class="calc-results">
+                <div class="calc-results__title">Live Results</div>
+                <div class="percentile-rows">
+                  <div class="percentile-row">
+                    <span class="pct-label" style="min-width:110px;">Full Kelly f*</span>
+                    <span class="pct-value" id="ks-full-kelly" style="margin-left:auto;">40.0%</span>
+                  </div>
+                  <div class="percentile-row">
+                    <span class="pct-label" style="min-width:110px;">Position used</span>
+                    <span class="pct-value" id="ks-used" style="margin-left:auto;">40.0%</span>
+                  </div>
+                  <div class="percentile-row">
+                    <span class="pct-label" style="min-width:110px;">Growth retained</span>
+                    <div class="pct-bar-track"><div class="pct-bar-fill" id="ks-growth-bar" style="width:100%; background:linear-gradient(90deg,var(--green),var(--sky));"></div></div>
+                    <span class="pct-value" id="ks-growth-val">100%</span>
+                  </div>
+                  <div class="percentile-row">
+                    <span class="pct-label" style="min-width:110px;">Variance vs full</span>
+                    <div class="pct-bar-track"><div class="pct-bar-fill" id="ks-var-bar" style="width:100%; background:linear-gradient(90deg,var(--orange),var(--red));"></div></div>
+                    <span class="pct-value" id="ks-var-val">100%</span>
+                  </div>
+                </div>
+                <svg id="ks-chart" viewBox="0 0 600 220" style="width:100%; height:auto; margin-top:0.75rem;">
+                  <line x1="40" y1="200" x2="560" y2="200" stroke="var(--border-light)" stroke-width="1"/>
+                  <line x1="40" y1="20" x2="40" y2="200" stroke="var(--border-light)" stroke-width="1"/>
+                  <polyline points="40.0,200.0 53.0,182.4 66.0,165.8 79.0,150.0 92.0,135.2 105.0,121.2 118.0,108.2 131.0,96.0 144.0,84.8 157.0,74.5 170.0,65.0 183.0,56.4 196.0,48.8 209.0,42.0 222.0,36.2 235.0,31.2 248.0,27.2 261.0,24.0 274.0,21.8 287.0,20.5 300.0,20.0 313.0,20.5 326.0,21.8 339.0,24.1 352.0,27.2 365.0,31.2 378.0,36.2 391.0,42.1 404.0,48.8 417.0,56.5 430.0,65.0 443.0,74.5 456.0,84.8 469.0,96.1 482.0,108.2 495.0,121.2 508.0,135.2 521.0,150.1 534.0,165.8 547.0,182.5 560.0,200.0" fill="none" stroke="var(--gold)" stroke-width="2.5"/>
+                  <line id="ks-marker-line" x1="300" y1="20" x2="300" y2="200" stroke="var(--sky)" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+                  <circle id="ks-marker" cx="300" cy="20" r="5" fill="var(--sky)" stroke="var(--bg)" stroke-width="2"/>
+                  <text x="300" y="213" text-anchor="middle" font-size="9" fill="var(--text-muted)">c=1 (full Kelly)</text>
+                </svg>
+                <p style="font-size:0.72rem; color:var(--text-muted); margin-top:0.4rem; text-align:center;">g(c)/g_max = c(2−c) — peaks at c=1, declines past it. Betting beyond full Kelly makes growth worse, not better.</p>
+              </div>
+            </div>
+          </div>
+
           <h2 id="fractional-kelly">Fractional Kelly in Practice</h2>
 
           <p>
@@ -274,6 +335,59 @@ Where:
           <p>
             The inverse covariance matrix is doing something specific and non-obvious: it accounts for how each asset's risk diversifies against the others. An asset with a mediocre or even negative expected return can still receive a positive Kelly weight if it reduces total portfolio variance enough — the formula sizes the portfolio as a system, not as a sum of independently-sized bets. Sizing each asset independently with the single-asset formula and ignoring correlation is one of the most common — and most costly — simplifications in practice.
           </p>
+
+          <div class="calc-section" id="kelly-multi-calc" style="margin:2rem 0;">
+            <div class="calc-header">
+              <span class="eyebrow">The extension none of the calculators we checked have</span>
+              <h3 style="margin-bottom:0.3rem;">Multi-Asset Kelly Portfolio Explorer</h3>
+              <p style="font-size:0.9rem;">Same 3-asset example as the Python code below. Adjust expected returns and watch the covariance matrix redistribute weight across correlated positions in real time.</p>
+            </div>
+            <div class="calc-grid">
+              <div class="calc-inputs">
+                <div class="calc-input-group">
+                  <label for="km-mu-stocks">Stocks — expected return <span class="value-display" id="km-mu-stocks-val">9%</span></label>
+                  <input type="range" id="km-mu-stocks" min="0" max="20" step="0.5" value="9">
+                </div>
+                <div class="calc-input-group">
+                  <label for="km-mu-bonds">Bonds — expected return <span class="value-display" id="km-mu-bonds-val">6%</span></label>
+                  <input type="range" id="km-mu-bonds" min="0" max="15" step="0.5" value="6">
+                </div>
+                <div class="calc-input-group">
+                  <label for="km-mu-cash">Cash — expected return <span class="value-display" id="km-mu-cash-val">4%</span></label>
+                  <input type="range" id="km-mu-cash" min="0" max="10" step="0.5" value="4">
+                </div>
+                <div class="calc-input-group">
+                  <label for="km-c">Kelly fraction (c) <span class="value-display" id="km-c-val">0.50×</span></label>
+                  <input type="range" id="km-c" min="0.1" max="1" step="0.05" value="0.5">
+                </div>
+                <p style="font-size:0.72rem; color:var(--text-muted);">Volatilities (22% / 15% / 8%) and correlations (0.40 / 0.10 / 0.05) held fixed to match the Python example below — only expected returns and the Kelly fraction move here.</p>
+              </div>
+              <div class="calc-results">
+                <div class="calc-results__title">Growth-Optimal Weights</div>
+                <div class="percentile-rows">
+                  <div class="percentile-row">
+                    <span class="pct-label" style="min-width:70px;">Stocks</span>
+                    <div class="pct-bar-track"><div class="pct-bar-fill" id="km-w-stocks" style="background:linear-gradient(90deg,var(--gold),var(--gold-light));"></div></div>
+                    <span class="pct-value" id="km-w-stocks-val">47.6%</span>
+                  </div>
+                  <div class="percentile-row">
+                    <span class="pct-label" style="min-width:70px;">Bonds</span>
+                    <div class="pct-bar-track"><div class="pct-bar-fill" id="km-w-bonds" style="background:linear-gradient(90deg,var(--violet),var(--violet-light));"></div></div>
+                    <span class="pct-value" id="km-w-bonds-val">16.9%</span>
+                  </div>
+                  <div class="percentile-row">
+                    <span class="pct-label" style="min-width:70px;">Cash</span>
+                    <div class="pct-bar-track"><div class="pct-bar-fill" id="km-w-cash" style="background:linear-gradient(90deg,var(--sky),var(--green));"></div></div>
+                    <span class="pct-value" id="km-w-cash-val">-14.7%</span>
+                  </div>
+                </div>
+                <div class="calc-cta">
+                  Total leverage: <strong id="km-total" style="color:var(--gold);">49.8%</strong>
+                  <br><span style="font-size:0.78rem;">Negative weight means the covariance structure says short this asset to cut portfolio variance — not that it's a bad asset alone.</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <h2 id="python">Full Python Implementation</h2>
 

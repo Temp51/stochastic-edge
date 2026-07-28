@@ -37,6 +37,8 @@
       this.codeBlockCopy();
       this.shareButtons();
       this.monteCarloCalc();
+      this.kellyExplorer();
+      this.kellyMultiExplorer();
       this.newsletterForms();
       this.articleFilter();
       this.counterAnimations();
@@ -577,6 +579,150 @@
         });
       });
     }
+  };
+
+
+  /* ─── 13b. KELLY FRACTION EXPLORER (single-asset) ─────────────────── */
+  App.kellyExplorer = function () {
+    const widget = App.$('#kelly-single-calc');
+    if (!widget) return;
+
+    const muInput    = App.$('#ks-mu');
+    const sigmaInput = App.$('#ks-sigma');
+    const cInput     = App.$('#ks-c');
+
+    const muVal    = App.$('#ks-mu-val');
+    const sigmaVal = App.$('#ks-sigma-val');
+    const cVal     = App.$('#ks-c-val');
+
+    const fullKellyOut = App.$('#ks-full-kelly');
+    const usedOut       = App.$('#ks-used');
+    const growthValOut  = App.$('#ks-growth-val');
+    const varValOut      = App.$('#ks-var-val');
+    const growthBar      = App.$('#ks-growth-bar');
+    const varBar         = App.$('#ks-var-bar');
+    const marker      = App.$('#ks-marker');
+    const markerLine  = App.$('#ks-marker-line');
+
+    function render() {
+      const mu    = +muInput.value / 100;
+      const sigma = +sigmaInput.value / 100;
+      const c     = +cInput.value;
+
+      muVal.textContent    = muInput.value + '%';
+      sigmaVal.textContent = sigmaInput.value + '%';
+      cVal.textContent     = c.toFixed(2) + '×';
+
+      const fullKelly  = mu / (sigma * sigma);       // f* = μ/σ²
+      const used       = c * fullKelly;
+      const growthRatio = c * (2 - c);                // g(c)/g_max, derived in article
+      const varRatio    = c * c;
+
+      fullKellyOut.textContent = (fullKelly * 100).toFixed(1) + '%';
+      usedOut.textContent      = (used * 100).toFixed(1) + '%';
+      growthValOut.textContent = (Math.max(0, growthRatio) * 100).toFixed(0) + '%';
+      varValOut.textContent    = (varRatio * 100).toFixed(0) + '%';
+
+      growthBar.style.width = Math.max(0, Math.min(100, growthRatio * 100)) + '%';
+      varBar.style.width    = Math.min(100, varRatio * 100) + '%';
+
+      // SVG marker follows the precomputed g(c)/g_max curve exactly
+      const xPx = 40 + (c / 2.0) * 520;
+      const yPx = 200 - Math.max(0, growthRatio) * 180;
+      marker.setAttribute('cx', xPx.toFixed(1));
+      marker.setAttribute('cy', yPx.toFixed(1));
+      markerLine.setAttribute('x1', xPx.toFixed(1));
+      markerLine.setAttribute('x2', xPx.toFixed(1));
+    }
+
+    [muInput, sigmaInput, cInput].forEach(inp => App.on(inp, 'input', render));
+    App.$$('[data-preset]', widget).forEach(btn => {
+      App.on(btn, 'click', () => { cInput.value = btn.dataset.preset; render(); });
+    });
+
+    render();
+  };
+
+
+  /* ─── 13c. MULTI-ASSET KELLY PORTFOLIO EXPLORER ───────────────────── */
+  App.kellyMultiExplorer = function () {
+    const widget = App.$('#kelly-multi-calc');
+    if (!widget) return;
+
+    // Gauss-Jordan inverse — verified against numpy.linalg.inv to 4 decimal
+    // places on the exact example used here before shipping.
+    function invertMatrix(M) {
+      const n = M.length;
+      const A = M.map((row, i) => [...row, ...Array.from({ length: n }, (_, j) => (i === j ? 1 : 0))]);
+      for (let col = 0; col < n; col++) {
+        let pivotRow = col;
+        for (let r = col + 1; r < n; r++) {
+          if (Math.abs(A[r][col]) > Math.abs(A[pivotRow][col])) pivotRow = r;
+        }
+        [A[col], A[pivotRow]] = [A[pivotRow], A[col]];
+        const pivot = A[col][col];
+        if (Math.abs(pivot) < 1e-12) return null;
+        for (let j = 0; j < 2 * n; j++) A[col][j] /= pivot;
+        for (let r = 0; r < n; r++) {
+          if (r === col) continue;
+          const factor = A[r][col];
+          for (let j = 0; j < 2 * n; j++) A[r][j] -= factor * A[col][j];
+        }
+      }
+      return A.map(row => row.slice(n));
+    }
+
+    function matVec(M, v) {
+      return M.map(row => row.reduce((sum, val, j) => sum + val * v[j], 0));
+    }
+
+    // Fixed vol + correlation — matches the article's Python example exactly
+    const vol  = [0.22, 0.15, 0.08];
+    const corr = [
+      [1.00, 0.40, 0.10],
+      [0.40, 1.00, 0.05],
+      [0.10, 0.05, 1.00],
+    ];
+    const cov     = vol.map((vi, i) => vol.map((vj, j) => vi * vj * corr[i][j]));
+    const covInv  = invertMatrix(cov);
+    const riskFree = 0.04;
+    const labels   = ['stocks', 'bonds', 'cash'];
+
+    const inputs = {
+      stocks: App.$('#km-mu-stocks'),
+      bonds:  App.$('#km-mu-bonds'),
+      cash:   App.$('#km-mu-cash'),
+      c:      App.$('#km-c'),
+    };
+
+    function render() {
+      if (!covInv) return; // singular matrix guard, should never trigger with fixed inputs
+      App.$('#km-mu-stocks-val').textContent = inputs.stocks.value + '%';
+      App.$('#km-mu-bonds-val').textContent  = inputs.bonds.value + '%';
+      App.$('#km-mu-cash-val').textContent   = inputs.cash.value + '%';
+      App.$('#km-c-val').textContent = (+inputs.c.value).toFixed(2) + '×';
+
+      const mu = [+inputs.stocks.value / 100, +inputs.bonds.value / 100, +inputs.cash.value / 100];
+      const c  = +inputs.c.value;
+      const excess    = mu.map(m => m - riskFree);
+      const fullKelly = matVec(covInv, excess);
+      const w         = fullKelly.map(x => x * c);
+
+      const maxAbs = Math.max(...w.map(Math.abs), 0.01);
+      w.forEach((wi, i) => {
+        const pctEl = App.$(`#km-w-${labels[i]}-val`);
+        const barEl = App.$(`#km-w-${labels[i]}`);
+        pctEl.textContent = (wi * 100).toFixed(1) + '%';
+        pctEl.style.color = wi < 0 ? 'var(--red)' : 'var(--text-primary)';
+        barEl.style.width = Math.min(100, Math.abs(wi) / maxAbs * 100) + '%';
+        barEl.style.opacity = wi < 0 ? '0.55' : '1';
+      });
+
+      App.$('#km-total').textContent = (w.reduce((a, b) => a + b, 0) * 100).toFixed(1) + '%';
+    }
+
+    Object.values(inputs).forEach(inp => App.on(inp, 'input', render));
+    render();
   };
 
 
